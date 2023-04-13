@@ -1,5 +1,6 @@
 package com.lightdev6.computing;
 
+import com.lightdev6.computing.item.Items;
 import com.mojang.logging.LogUtils;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
@@ -23,7 +24,7 @@ public class Computing {
     public Computing()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
+        Items.register(modEventBus);
         modEventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
