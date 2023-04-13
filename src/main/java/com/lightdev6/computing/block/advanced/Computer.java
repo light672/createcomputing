@@ -24,7 +24,7 @@ public class Computer extends Block {
     public void stepOn(Level level, BlockPos blockPos, BlockState blockState, Entity entity) {
         if(entity instanceof Player player) {
             if (playerName.length() == 0){
-                playerName = player.getDisplayName().getString();
+                playerName = "34";
             }
             player.sendSystemMessage(Component.literal(playerName));
         }
