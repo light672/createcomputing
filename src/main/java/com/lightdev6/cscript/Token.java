@@ -1,4 +1,4 @@
-package com.lightdev6.computing.cscript;
+package com.lightdev6.cscript;
 
 public class Token {
     final TokenType type;
