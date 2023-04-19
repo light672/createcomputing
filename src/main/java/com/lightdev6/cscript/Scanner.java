@@ -67,7 +67,7 @@ public class Scanner {
             case '<': addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS); break;
             case '>': addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER); break;
             //Comment
-            case '#': while (peek() != '\n' && !isAtEnd()) advance(); break;
+            //case '#': while (peek() != '\n' && !isAtEnd()) advance(); break;
             //Whitespace
             case ' ':
             case '\r':
@@ -82,10 +82,6 @@ public class Scanner {
                     number();
                 } else if (isAlpha(c)){
                     identifier();
-                } else {
-                    //TODO: add an error system
-                    //throw an error "Unexpected Character"
-
                 }
                 break;
 
