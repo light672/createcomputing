@@ -1,0 +1,13 @@
+function sayHi(first, last) {
+  print "Hi, " + first + " " + last + "!";
+}
+
+sayHi("Dear", "Reader");
+
+function f(x){
+    print 2 * x + 3;
+}
+
+for (var i = 1; i < 100; i = i + 1){
+    f(i);
+}
