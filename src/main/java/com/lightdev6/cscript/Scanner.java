@@ -25,9 +25,9 @@ public class Scanner {
         keywords.put("false", FALSE);
         keywords.put("true", TRUE);
         keywords.put("for", FOR);
-        keywords.put("fun", FUN);
+        keywords.put("function", FUN);
         keywords.put("if", IF);
-        keywords.put("nil", NIL);
+        keywords.put("null", NIL);
         keywords.put("or", OR);
         keywords.put("print", PRINT);
         keywords.put("return", RETURN);
