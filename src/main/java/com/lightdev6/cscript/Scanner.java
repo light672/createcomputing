@@ -70,7 +70,7 @@ public class Scanner {
                 addToken(match('=') ? BANG_EQUAL : BANG);
                 break;
             case '=':
-                addToken(match('=') ? EQUAL_EQUAL : BANG);
+                addToken(match('=') ? EQUAL_EQUAL : EQUAL);
                 break;
             case '<':
                 addToken(match('=') ? LESS_EQUAL : LESS);

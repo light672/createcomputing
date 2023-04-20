@@ -1,6 +1,6 @@
 package com.lightdev6.cscript;
 
-class AstPrinter implements Expr.Visitor<String>{
+/*class AstPrinter implements Expr.Visitor<String>{
     String print(Expr expr){
         return expr.accept(this);
     }
@@ -35,4 +35,4 @@ class AstPrinter implements Expr.Visitor<String>{
         parenthesizedString.append(")");
         return parenthesizedString.toString();
     }
-}
+}*/

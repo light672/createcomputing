@@ -1,0 +1,9 @@
+var a = "eggrolls";
+
+print a;
+
+a = "bacon";
+
+var b = " and eggs.";
+
+print a + b;
