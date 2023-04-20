@@ -2,6 +2,8 @@ package com.lightdev6.cscript;
 
 import ca.weblite.objc.Runtime;
 
+import java.util.List;
+
 class RuntimeError extends RuntimeException {
     final Token token;
 
@@ -11,7 +13,7 @@ class RuntimeError extends RuntimeException {
     }
 }
 
-public class Interpreter implements Expr.Visitor<Object>{
+public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     @Override
     public Object visitLiteralExpr(Expr.Literal expr){
         return expr.value;
@@ -77,6 +79,20 @@ public class Interpreter implements Expr.Visitor<Object>{
         return null;
     }
 
+    @Override
+    public Void visitExpressionStmt(Stmt.Expression stmt){
+        evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Stmt.Print stmt){
+        Object value = evaluate(stmt.expression);
+        System.out.println(stringify(value));
+        return null;
+    }
+
+
     private void checkNumberOperand(Token operator, Object operand){
         if (operand instanceof Double) return;
         throw new RuntimeError(operator, "Operand must be a number.");
@@ -115,13 +131,18 @@ public class Interpreter implements Expr.Visitor<Object>{
         return a.equals(b);
     }
 
-    void interpret(Expr expression){
+    void interpret(List<Stmt> statements){
         try {
-            Object value = evaluate(expression);
-            System.out.println(stringify(value));
+            for (Stmt statement : statements){
+                execute(statement);
+            }
         } catch (RuntimeError error){
             CScript.runtimeError(error);
         }
+    }
+
+    private void execute(Stmt stmt){
+        stmt.accept(this);
     }
 
     private String stringify(Object object){
