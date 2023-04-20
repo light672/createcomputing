@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import static com.lightdev6.cscript.TokenType.*;
 
 public class Scanner {
     private final String source;
@@ -13,112 +14,106 @@ public class Scanner {
     private int current = 0;
     private int line = 1;
 
+
     private static final Map<String, TokenType> keywords;
 
     static {
         keywords = new HashMap<>();
-        keywords.put("and", TokenType.AND);
-        keywords.put("class", TokenType.CLASS);
-        keywords.put("else", TokenType.ELSE);
-        keywords.put("false", TokenType.FALSE);
-        keywords.put("for", TokenType.FOR);
-        keywords.put("fun", TokenType.FUN);
-        keywords.put("if", TokenType.IF);
-        keywords.put("nil", TokenType.NIL);
-        keywords.put("or", TokenType.OR);
-        keywords.put("print", TokenType.PRINT);
-        keywords.put("return", TokenType.RETURN);
-        keywords.put("super", TokenType.SUPER);
-        keywords.put("this", TokenType.THIS);
-        keywords.put("true", TokenType.TRUE);
-        keywords.put("var", TokenType.VAR);
-        keywords.put("while", TokenType.WHILE);
+        keywords.put("and", AND);
+        keywords.put("class", CLASS);
+        keywords.put("else", ELSE);
+        keywords.put("false", FALSE);
+        keywords.put("for", FOR);
+        keywords.put("fun", FUN);
+        keywords.put("if", IF);
+        keywords.put("nil", NIL);
+        keywords.put("or", OR);
+        keywords.put("print", PRINT);
+        keywords.put("return", RETURN);
+        keywords.put("var", VAR);
+        keywords.put("while", WHILE);
+
     }
 
     Scanner(String source){
         this.source = source;
     }
-    List<Token> scanTokens() {
-        while(!isAtEnd()) {
+
+    List<Token> scanTokens(){
+        while (!isAtEnd()){
             start = current;
             scanToken();
         }
-
-        tokens.add(new Token(TokenType.EOF, "", null, line));
+        tokens.add(new Token(EOF, "", null, line));
         return tokens;
     }
-
-    private void scanToken(){
-        char c = advance();
-        switch (c){
-            //Grouping Symbols
-            case '(': addToken(TokenType.LEFT_PAREN); break;
-            case ')': addToken(TokenType.RIGHT_PAREN); break;
-            case '{': addToken(TokenType.LEFT_BRACE); break;
-            case '}': addToken(TokenType.RIGHT_BRACE); break;
-            case ',': addToken(TokenType.COMMA); break;
-            //Operands
-            case '-': addToken(TokenType.MINUS); break;
-            case '+': addToken(TokenType.PLUS); break;
-            case '*': addToken(TokenType.STAR); break;
-            case '/': addToken(TokenType.SLASH); break;
-            case '!': addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG); break;
-            case '=': addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL); break;
-            case '<': addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS); break;
-            case '>': addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER); break;
-            //Comment
-            //case '#': while (peek() != '\n' && !isAtEnd()) advance(); break;
-            //Whitespace
-            case ' ':
-            case '\r':
-            case '\t':
-                break;
-            case '\n': line++; break;
-            //Strings
-            case '"': string(); break;
-
-            default:
-                if(isDigit(c)){
-                    number();
-                } else if (isAlpha(c)){
-                    identifier();
-                }
-                break;
-
-
-        }
-
-    }
-
-    private char advance(){
-        return source.charAt(current++);
-    }
-
-    private char peek(){
-        if(!isAtEnd()) return '\0';
-        return source.charAt(current);
-    }
-
-    private char peekNext(){
-        if (current + 1 >= source.length()) return '\0';
-        return source.charAt(current + 1);
-    }
-
-    private boolean match(char expected){
-        if (isAtEnd()) return false;
-        if (source.charAt(current) != expected) return false;
-        current++;
-        return true;
-    }
-
-
 
     private boolean isAtEnd(){
         return current >= source.length();
     }
 
-    private boolean isDigit(char c){
-        return c >= '0' && c <= '9';
+    private void scanToken() {
+        char c = advance();
+        switch (c) {
+            case '(': addToken(LEFT_PAREN); break;
+            case ')': addToken(RIGHT_PAREN); break;
+            case '{': addToken(LEFT_BRACE); break;
+            case '}': addToken(RIGHT_BRACE); break;
+            case ',': addToken(COMMA); break;
+            case '.': addToken(DOT); break;
+            case '-': addToken(MINUS); break;
+            case '+': addToken(PLUS); break;
+            case ';': addToken(SEMICOLON); break;
+            case '*': addToken(STAR); break;
+            case '!':
+                addToken(match('=') ? BANG_EQUAL : BANG);
+                break;
+            case '=':
+                addToken(match('=') ? EQUAL_EQUAL : BANG);
+                break;
+            case '<':
+                addToken(match('=') ? LESS_EQUAL : LESS);
+                break;
+            case '>':
+                addToken(match('=') ? GREATER_EQUAL : GREATER);
+                break;
+            case '/':
+                if (match('/')){
+                    while (peek() != '\n' && !isAtEnd()) advance();
+                } else {
+                    addToken(SLASH);
+                }
+                break;
+            case ' ':
+            case '\r':
+            case '\t':
+                break;
+            case '\n':
+                line++;
+                break;
+            case '"': string(); break;
+            default:
+                if (isDigit(c)) {
+                    number();
+                } else if (isAlpha(c)){
+                    identifier();
+                } else {
+                    CScript.error(line, "Unexpected character.");
+                    break;
+                }
+
+        }
+
+
+    }
+
+    private void identifier() {
+        while (isAlphaNumeric(peek())) advance();
+
+        String text = source.substring(start, current);
+        TokenType type = keywords.get(text);
+        if (type == null) type = IDENTIFIER;
+        addToken(type);
     }
 
     private boolean isAlpha(char c){
@@ -129,52 +124,66 @@ public class Scanner {
         return isAlpha(c) || isDigit(c);
     }
 
+    private boolean isDigit(char c){
+        return c >= '0' && c <= '9';
+    }
+
+    private void number() {
+        while (isDigit(peek())) advance();
+        if (peek() == '.' && isDigit(peekNext())){
+            advance();
+            while (isDigit(peek())) advance();
+        }
+        addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
+    }
+
+    private char peekNext(){
+        if (current + 1 >= source.length()) return '\0';
+        return source.charAt(current + 1);
+    }
+
     private void string(){
-        while(peek() != '"' && !isAtEnd()){
-            if(peek() == '\n') line++;
+        while (peek() != '"' && !isAtEnd()){
+            if (peek() == '\n') line++;
             advance();
         }
 
-        if(isAtEnd()){
-            //TODO: add an error system
-            //throw an error at this line "Unterminated String"
+        if (isAtEnd()){
+            CScript.error(line, "Unterminated string");
             return;
         }
 
         advance();
-
         String value = source.substring(start + 1, current - 1);
-        addToken(TokenType.STRING, value);
+        addToken(STRING, value);
     }
 
-    private void number(){
-        while (isDigit(peek())) advance();
-        //look for decimal point
-        if(peek() == '.' && isDigit(peekNext())) {
-            advance();
-
-            while (isDigit(peek())) advance();
-        }
-
-        addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start, current)));
+    private char peek(){
+        if (isAtEnd()) return '\0';
+        return source.charAt(current);
     }
 
-    private void identifier(){
-        while(isAlphaNumeric(peek())) advance();
-        String text = source.substring(start,current);
-        TokenType type = keywords.get(text);
-        if (type == null) type = TokenType.IDENTIFIER;
-        addToken(type);
+    private boolean match(char expected){
+        if (isAtEnd()) return false;
+        if (source.charAt(current) != expected) return false;
+
+        current ++;
+        return true;
     }
 
-    private void addToken(TokenType type){
+    private char advance() {
+        return source.charAt(current++);
+    }
+
+    private void addToken(TokenType type) {
         addToken(type, null);
     }
 
     private void addToken(TokenType type, Object literal){
         String text = source.substring(start, current);
-        tokens.add(new Token(type,text,literal,line));
+        tokens.add(new Token(type, text, literal, line));
     }
+
 
 
 
