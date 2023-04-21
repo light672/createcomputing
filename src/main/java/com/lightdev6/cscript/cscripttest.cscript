@@ -1,8 +1,1 @@
-function f(x){
-    return x * 2;
-}
-
-for (var i = 1; i <= 100; i = i + 1){
-    var result = f(i);
-    print result;
-}
+print 3 ^ 2 * 2;

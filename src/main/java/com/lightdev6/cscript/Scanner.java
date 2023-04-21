@@ -62,10 +62,16 @@ public class Scanner {
             case '}': addToken(RIGHT_BRACE); break;
             case ',': addToken(COMMA); break;
             case '.': addToken(DOT); break;
-            case '-': addToken(MINUS); break;
-            case '+': addToken(PLUS); break;
+            case '-':
+                addToken(match('=') ? MINUS_EQUAL : MINUS);
+                break;
+            case '+':
+                addToken(match('=') ? PLUS_EQUAL : PLUS);
+                break;
             case ';': addToken(SEMICOLON); break;
-            case '*': addToken(STAR); break;
+            case '*':
+                addToken(match('=') ? STAR_EQUAL : STAR);
+                break;
             case '!':
                 addToken(match('=') ? BANG_EQUAL : BANG);
                 break;
@@ -82,9 +88,11 @@ public class Scanner {
                 if (match('/')){
                     while (peek() != '\n' && !isAtEnd()) advance();
                 } else {
-                    addToken(SLASH);
+                    addToken(match('=') ? SLASH_EQUAL : SLASH);
                 }
                 break;
+            case '^':
+                addToken(match('=') ? CARET_EQUAL : CARET);
             case ' ':
             case '\r':
             case '\t':
