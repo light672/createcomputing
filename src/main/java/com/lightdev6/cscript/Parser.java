@@ -24,13 +24,20 @@ class Parser {
         if (match(EQUAL)){
             Token equals = previous();
             Expr value = assignment();
-
             if(expr instanceof Expr.Variable){
                 Token name = ((Expr.Variable)expr).name;
                 return new Expr.Assign(name, value);
             }
 
             error(equals, "Invalid assignment target.");
+        } else if (match(PLUS_EQUAL) || match(MINUS_EQUAL) || match(STAR_EQUAL) || match(SLASH_EQUAL) || match(CARET_EQUAL)){
+            Token operatorEqual = previous();
+            Token operator = createTokenFromOperatorEquals(operatorEqual);
+            Expr value = assignment();
+            if (expr instanceof Expr.Variable){
+                Token name = ((Expr.Variable)expr).name;
+                return new Expr.Assign(name, new Expr.Binary(expr, operator, value));
+            }
         }
         return expr;
     }
@@ -381,6 +388,18 @@ class Parser {
         Expr expr = expression();
         consume(SEMICOLON, "Expect ';' after expression.");
         return new Stmt.Expression(expr);
+    }
+
+    private Token createTokenFromOperatorEquals(Token operatorEqual){
+        switch (operatorEqual.type){
+            case PLUS_EQUAL: return new Token(PLUS, "+", null, operatorEqual.line);
+            case MINUS_EQUAL: return new Token(MINUS, "-", null, operatorEqual.line);
+            case STAR_EQUAL: return new Token(STAR, "*", null, operatorEqual.line);
+            case SLASH_EQUAL: return new Token(SLASH, "/", null, operatorEqual.line);
+            case CARET_EQUAL: return new Token(CARET, "^", null, operatorEqual.line);
+        }
+        //Unreachable
+        return null;
     }
 
 

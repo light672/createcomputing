@@ -135,6 +135,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
                 checkNumberOperands(expr.operator, left, right);
                 return (double)left <= (double)right;
             case MINUS:
+            case MINUS_EQUAL:
                 checkNumberOperands(expr.operator, left, right);
                 return (double)left - (double)right;
             case PLUS:
