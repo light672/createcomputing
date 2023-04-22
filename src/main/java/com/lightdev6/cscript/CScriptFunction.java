@@ -5,9 +5,11 @@ import java.util.List;
 public class CScriptFunction implements CScriptCallable{
     private final Stmt.Function declaration;
     private final Environment closure;
-    CScriptFunction(Stmt.Function declaration, Environment closure){
+    private final boolean isInitializer;
+    CScriptFunction(Stmt.Function declaration, Environment closure, boolean isInitializer){
         this.declaration = declaration;
         this.closure = closure;
+        this.isInitializer = isInitializer;
     }
 
     @Override
@@ -20,8 +22,10 @@ public class CScriptFunction implements CScriptCallable{
         try {
             interpreter.executeBlock(declaration.body, environment);
         } catch (Return returnValue){
+            if (isInitializer) return closure.getAt(0, "this");
             return returnValue.value;
         }
+        if (isInitializer) return closure.getAt(0, "this");
         return null;
     }
 
@@ -33,5 +37,11 @@ public class CScriptFunction implements CScriptCallable{
     @Override
     public String toString(){
         return "<fn " + declaration.name.lexeme + ">";
+    }
+
+    CScriptFunction bind(CScriptInstance instance){
+        Environment environment = new Environment(closure);
+        environment.define("this", instance);
+        return new CScriptFunction(declaration, environment, isInitializer);
     }
 }
