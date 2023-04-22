@@ -6,9 +6,11 @@ import java.util.Map;
 class CScriptClass implements CScriptCallable{
     final String name;
     private final Map<String, CScriptFunction> methods;
-    CScriptClass(String name, Map<String, CScriptFunction> methods){
+    final CScriptClass superclass;
+    CScriptClass(String name, CScriptClass superclass, Map<String, CScriptFunction> methods){
         this.name = name;
         this.methods = methods;
+        this.superclass = superclass;
     }
 
     @Override
@@ -36,6 +38,9 @@ class CScriptClass implements CScriptCallable{
     CScriptFunction findMethod(String name){
         if (methods.containsKey(name)){
             return methods.get(name);
+        }
+        if(superclass != null){
+            return superclass.findMethod(name);
         }
         return null;
     }

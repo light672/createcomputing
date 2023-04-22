@@ -37,6 +37,7 @@ public class Scanner {
         keywords.put("var", VAR);
         keywords.put("variable", VAR);
         keywords.put("while", WHILE);
+        keywords.put("from", FROM);
 
     }
 
