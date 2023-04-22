@@ -1,5 +1,6 @@
 package com.lightdev6.computing.block.advanced;
 
+import com.lightdev6.cscript.CScript;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -34,7 +35,8 @@ public class Computer extends Block {
         if(!level.isClientSide && hand.equals(InteractionHand.MAIN_HAND)){
             ItemStack item = player.getMainHandItem();
             String itemName = item.getHoverName().getString();
-            player.sendSystemMessage(Component.literal(itemName));
+            //player.sendSystemMessage(Component.literal(itemName));
+            new CScript(itemName, player);
         }
 
         return super.use(blockState, level, blockPos, player, hand, result);

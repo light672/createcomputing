@@ -8,6 +8,7 @@ import static com.lightdev6.cscript.TokenType.*;
 
 public class Scanner {
     private final String source;
+    private final CScript main;
     private final List<Token> tokens = new ArrayList<>();
 
     private int start = 0;
@@ -41,7 +42,8 @@ public class Scanner {
 
     }
 
-    Scanner(String source){
+    Scanner(String source, CScript main){
+        this.main = main;
         this.source = source;
     }
 
@@ -112,7 +114,7 @@ public class Scanner {
                 } else if (isAlpha(c)){
                     identifier();
                 } else {
-                    CScript.error(line, "Unexpected character.");
+                    main.error(line, "Unexpected character.");
                     break;
                 }
 
@@ -163,7 +165,7 @@ public class Scanner {
         }
 
         if (isAtEnd()){
-            CScript.error(line, "Unterminated string");
+            main.error(line, "Unterminated string");
             return;
         }
 

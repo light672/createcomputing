@@ -1,2 +1,12 @@
-var x = 1;
-print x += 3;
+class foo {
+    a(){
+        print 3;
+    }
+}
+
+
+class boo from foo {
+
+}
+
+boo().a();

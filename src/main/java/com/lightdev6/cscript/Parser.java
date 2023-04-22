@@ -9,8 +9,10 @@ import static com.lightdev6.cscript.TokenType.*;
 class Parser {
     private static class ParseError extends RuntimeException{};
     private final List<Token> tokens;
+    private final CScript main;
     private int current = 0;
-    Parser(List<Token> tokens){
+    Parser(List<Token> tokens, CScript main){
+        this.main = main;
         this.tokens = tokens;
     }
 
@@ -226,7 +228,7 @@ class Parser {
     }
 
     private ParseError error(Token token, String message){
-        CScript.error(token, message);
+        main.error(token, message);
         return new ParseError();
     }
 

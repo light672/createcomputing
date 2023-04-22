@@ -24,12 +24,14 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
 
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
+    private final CScript main;
     private FunctionType currentFunction = FunctionType.NONE;
     private ClassType currentClass = ClassType.NONE;
 
 
 
-    Resolver(Interpreter interpreter){
+    Resolver(Interpreter interpreter, CScript main){
+        this.main = main;
         this.interpreter = interpreter;
     }
 
@@ -67,7 +69,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
     @Override
     public Void visitVariableExpr(Expr.Variable expr){
         if (!scopes.isEmpty() && scopes.peek().get(expr.name.lexeme) == Boolean.FALSE){
-            CScript.error(expr.name, "Can't read local variable in its own initializer.");
+            main.error(expr.name, "Can't read local variable in its own initializer.");
         }
         resolveLocal(expr, expr.name);
         return null;
@@ -111,12 +113,12 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
     @Override
     public Void visitReturnStmt(Stmt.Return stmt){
         if (currentFunction == FunctionType.NONE){
-            CScript.error(stmt.keyword, "Can't return from top-level code.");
+            main.error(stmt.keyword, "Can't return from top-level code.");
         }
         if (stmt.value != null){
             resolve(stmt.value);
             if (currentFunction == FunctionType.INITIALIZER){
-                CScript.error(stmt.keyword, "Can't return a value from an initializer.");
+                main.error(stmt.keyword, "Can't return a value from an initializer.");
             }
         }
         return null;
@@ -152,7 +154,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
         declare(stmt.name);
         define(stmt.name);
         if (stmt.superclass != null && stmt.name.lexeme.equals(stmt.superclass.name.lexeme)){
-            CScript.error(stmt.superclass.name, "A class cannot inherit from itself.");
+            main.error(stmt.superclass.name, "A class cannot inherit from itself.");
         }
         if (stmt.superclass != null){
             currentClass = ClassType.SUBCLASS;
@@ -180,7 +182,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
     @Override
     public Void visitThisExpr(Expr.This expr){
         if (currentClass == ClassType.NONE){
-            CScript.error(expr.keyword, "Can't use 'this' outside of a class.");
+            main.error(expr.keyword, "Can't use 'this' outside of a class.");
             return null;
         }
         resolveLocal(expr, expr.keyword);
@@ -190,9 +192,9 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
     @Override
     public Void visitSuperExpr(Expr.Super expr){
         if (currentClass == ClassType.NONE){
-            CScript.error(expr.keyword, "Can't use 'super' outside of a class.");
+            main.error(expr.keyword, "Can't use 'super' outside of a class.");
         } else if (currentClass != ClassType.SUBCLASS){
-            CScript.error(expr.keyword, "Can't ise 'super' in a class with no superclass");
+            main.error(expr.keyword, "Can't ise 'super' in a class with no superclass");
         }
         resolveLocal(expr, expr.keyword);
         return null;
@@ -269,7 +271,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
         if (scopes.isEmpty()) return;
         Map<String, Boolean> scope = scopes.peek();
         if (scope.containsKey(name.lexeme)){
-            CScript.error(name, "Already a variable with this name in this scope");
+            main.error(name, "Already a variable with this name in this scope");
         }
         scope.put(name.lexeme, false);
     }
