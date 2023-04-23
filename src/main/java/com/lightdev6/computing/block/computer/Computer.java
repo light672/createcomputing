@@ -1,8 +1,7 @@
 package com.lightdev6.computing.block.computer;
 
 import com.lightdev6.computing.Computing;
-import com.lightdev6.computing.block.BlockEntities;
-import com.lightdev6.computing.block.computer.ComputerBlockEntity;
+import com.lightdev6.computing.AllTileEntities;
 import com.simibubi.create.content.contraptions.relays.elementary.ICogWheel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -62,7 +61,7 @@ public class Computer extends Block implements EntityBlock, ICogWheel {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return BlockEntities.COMPUTER.get().create(blockPos, blockState);
+        return AllTileEntities.COMPUTER.get().create(blockPos, blockState);
     }
 
 

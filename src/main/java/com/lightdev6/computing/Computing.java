@@ -1,10 +1,8 @@
 package com.lightdev6.computing;
 
-import com.lightdev6.computing.block.Blocks;
-import com.lightdev6.computing.block.BlockEntities;
-import com.lightdev6.computing.item.Items;
 import com.lightdev6.cscript.CScript;
 import com.mojang.logging.LogUtils;
+import com.simibubi.create.foundation.data.CreateRegistrate;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -25,31 +23,27 @@ import java.util.List;
 public class Computing {
     public static final String MOD_ID = "computing";
     private static final Logger LOGGER = LogUtils.getLogger();
-    //public static final Map<Vec3, CScript> runningPrograms = new HashMap<>();
+    public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID);
 
     public Computing() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        Items.register(modEventBus);
-        Blocks.register(modEventBus);
-        BlockEntities.register(modEventBus);
+        REGISTRATE.registerEventListeners(modEventBus);
+        AllBlocks.register();
+        AllTileEntities.register();
         modEventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        // Some common setup code
         LOGGER.info("HELLO FROM COMMON SETUP");
     }
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
         LOGGER.info("Loaded Computing");
     }
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
