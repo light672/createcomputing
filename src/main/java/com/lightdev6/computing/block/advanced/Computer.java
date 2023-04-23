@@ -24,6 +24,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class Computer extends Block implements EntityBlock {
 
@@ -44,6 +46,8 @@ public class Computer extends Block implements EntityBlock {
             if (level.getBlockEntity(blockPos) instanceof ComputerBlockEntity computer){
                 if(item.getItem().equals(Items.STICK)){
                     Computing.runProgram(computer.getScript(), Vec3.atCenterOf(blockPos), player);
+                } else if(item.getItem().equals(Items.QUARTZ)){
+                    Computing.runFunctionProgram("f", Arrays.asList(13.0),computer.getScript(), Vec3.atCenterOf(blockPos), player);
                 } else {
                     computer.setScript(itemName);
                     player.sendSystemMessage(Component.literal("Set script"));

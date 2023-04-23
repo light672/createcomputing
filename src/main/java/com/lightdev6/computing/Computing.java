@@ -20,6 +20,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -27,9 +28,9 @@ import java.util.Map;
 public class Computing {
     public static final String MOD_ID = "computing";
     private static final Logger LOGGER = LogUtils.getLogger();
-    public static final Map<Vec3, CScript> runningPrograms = new HashMap<>();
-    public Computing()
-    {
+    //public static final Map<Vec3, CScript> runningPrograms = new HashMap<>();
+
+    public Computing() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         Items.register(modEventBus);
         Blocks.register(modEventBus);
@@ -39,36 +40,36 @@ public class Computing {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event)
-    {
+    private void commonSetup(final FMLCommonSetupEvent event) {
         // Some common setup code
         LOGGER.info("HELLO FROM COMMON SETUP");
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event)
-    {
+    public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("Loaded Computing");
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents
-    {
+    public static class ClientModEvents {
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
+        public static void onClientSetup(FMLClientSetupEvent event) {
 
         }
     }
 
-    public static void runProgram(String source, Vec3 position, Player player){
-        if (runningPrograms.containsKey(position)) runningPrograms.remove(position);
-        //runningPrograms.put(position, new CScript(source, player));
+    public static void runProgram(String source, Vec3 position, Player player) {
         Thread thread = new Thread(() -> {
             new CScript(source, player);
+        });
+        thread.start();
+    }
+    public static void runFunctionProgram(String function, List<Object> arguments, String source, Vec3 position, Player player){
+        Thread thread = new Thread(() -> {
+           new CScript(source, player, function, arguments);
         });
         thread.start();
     }

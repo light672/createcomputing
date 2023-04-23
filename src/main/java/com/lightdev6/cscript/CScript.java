@@ -9,19 +9,23 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 public class CScript {
-    private final Interpreter interpreter = new Interpreter(this);
+
     boolean hadError = false;
     boolean hadRuntimeError = false;
     private final Player player;
-    private final String source;
 
     public CScript(String source, Player player){
-        this.source = source;
         this.player = player;
         run(source);
+    }
+
+    public CScript(String source, Player player, String functionName, List<Object> arguments){
+        this.player = player;
+        runFunction(source, functionName, arguments);
     }
 
     private void run (String source){
@@ -31,10 +35,25 @@ public class CScript {
         List<Stmt> statements = parser.parse();
 
         if (hadError) return;
+        final Interpreter interpreter = new Interpreter(this);
         Resolver resolver = new Resolver(interpreter, this);
         resolver.resolve(statements);
         if (hadError) return;
         interpreter.interpret(statements);
+
+    }
+    private void runFunction (String source, String functionName, List<Object> arguments){
+        Scanner scanner = new Scanner(source, this);
+        List<Token> tokens = scanner.scanTokens();
+        Parser parser = new Parser(tokens, this);
+        List<Stmt> statements = parser.parse();
+
+        if (hadError) return;
+        final FunctionCallInterpreter interpreter = new FunctionCallInterpreter(this, "f");
+        Resolver resolver = new Resolver(interpreter, this);
+        resolver.resolve(statements);
+        if (hadError) return;
+        interpreter.callFunction(statements, functionName,arguments);
         //System.out.println(new AstPrinter().print(expression));
     }
 
