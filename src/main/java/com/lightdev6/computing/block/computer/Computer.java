@@ -1,33 +1,30 @@
-package com.lightdev6.computing.block.advanced;
+package com.lightdev6.computing.block.computer;
 
 import com.lightdev6.computing.Computing;
-import com.lightdev6.computing.block.entity.BlockEntities;
-import com.lightdev6.computing.block.entity.ComputerBlockEntity;
-import com.lightdev6.cscript.CScript;
+import com.lightdev6.computing.block.BlockEntities;
+import com.lightdev6.computing.block.computer.ComputerBlockEntity;
+import com.simibubi.create.content.contraptions.relays.elementary.ICogWheel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.util.Arrays;
-import java.util.List;
 
-public class Computer extends Block implements EntityBlock {
+public class Computer extends Block implements EntityBlock, ICogWheel {
 
 
     public Computer(Properties properties) {
@@ -68,5 +65,20 @@ public class Computer extends Block implements EntityBlock {
         return BlockEntities.COMPUTER.get().create(blockPos, blockState);
     }
 
+
+    @Override
+    public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
+        return false;
+    }
+
+    @Override
+    public Direction.Axis getRotationAxis(BlockState state) {
+        return Direction.Axis.Y;
+    }
+
+    @Override
+    public SpeedLevel getMinimumRequiredSpeedLevel() {
+        return SpeedLevel.FAST;
+    }
 
 }

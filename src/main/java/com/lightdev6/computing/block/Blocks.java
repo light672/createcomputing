@@ -1,7 +1,7 @@
 package com.lightdev6.computing.block;
 
 import com.lightdev6.computing.Computing;
-import com.lightdev6.computing.block.advanced.Computer;
+import com.lightdev6.computing.block.computer.Computer;
 import com.lightdev6.computing.item.Items;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;

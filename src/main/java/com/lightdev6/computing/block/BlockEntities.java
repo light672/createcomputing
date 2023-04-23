@@ -1,8 +1,7 @@
-package com.lightdev6.computing.block.entity;
+package com.lightdev6.computing.block;
 
 import com.lightdev6.computing.Computing;
-import com.lightdev6.computing.block.Blocks;
-import net.minecraft.world.level.block.Block;
+import com.lightdev6.computing.block.computer.ComputerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;

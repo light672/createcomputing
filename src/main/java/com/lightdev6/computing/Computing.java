@@ -1,7 +1,7 @@
 package com.lightdev6.computing;
 
 import com.lightdev6.computing.block.Blocks;
-import com.lightdev6.computing.block.entity.BlockEntities;
+import com.lightdev6.computing.block.BlockEntities;
 import com.lightdev6.computing.item.Items;
 import com.lightdev6.cscript.CScript;
 import com.mojang.logging.LogUtils;
@@ -16,12 +16,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Computing.MOD_ID)
