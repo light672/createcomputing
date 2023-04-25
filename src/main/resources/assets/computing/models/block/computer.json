@@ -1,8 +1,27 @@
 {
-  "parent": "minecraft:block/orientable",
-  "textures": {
-    "front": "minecraft:block/furnace_front",
-    "side": "minecraft:block/furnace_side",
-    "top": "minecraft:block/furnace_top"
-  }
+	"credit": "Made with Blockbench",
+	"textures": {
+		"particle": "brass_block"
+	},
+	"groups": [
+		{
+			"name": "block",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [
+				{
+					"name": "top",
+					"origin": [8, 8, 8],
+					"color": 0,
+					"children": []
+				},
+				{
+					"name": "bottom",
+					"origin": [8, 8, 8],
+					"color": 0,
+					"children": []
+				}
+			]
+		}
+	]
 }

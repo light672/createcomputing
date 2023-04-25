@@ -9,6 +9,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import static com.lightdev6.computing.Computing.REGISTRATE;
 
@@ -23,6 +24,7 @@ public class AllBlocks {
             .initialProperties(() -> Blocks.STONE)
             .transform(pickaxe())
             .simpleItem()
+            .properties(BlockBehaviour.Properties::noOcclusion)
             .register();
 
     public static <T extends Block, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> pickaxe() {

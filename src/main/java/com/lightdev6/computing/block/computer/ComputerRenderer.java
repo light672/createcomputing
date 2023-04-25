@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllBlockPartials;
 import com.simibubi.create.content.contraptions.base.KineticTileEntity;
 import com.simibubi.create.content.contraptions.base.KineticTileEntityRenderer;
+import com.simibubi.create.content.contraptions.components.mixer.MechanicalMixerTileEntity;
 import com.simibubi.create.foundation.render.CachedBufferer;
 import com.simibubi.create.foundation.render.SuperByteBuffer;
 import com.simibubi.create.foundation.utility.AnimationTickHolder;
@@ -22,16 +23,7 @@ public class ComputerRenderer extends KineticTileEntityRenderer{
     }
 
     @Override
-    public boolean shouldRenderOffScreen(KineticTileEntity te) {
-        return true;
-    }
-
-    @Override
-    protected void renderSafe(KineticTileEntity te, float partialTicks, PoseStack ms, MultiBufferSource buffer,
-                              int light, int overlay) {
-        BlockState blockState = te.getBlockState();
-        VertexConsumer vb = buffer.getBuffer(RenderType.solid());
-        SuperByteBuffer superBuffer = CachedBufferer.partial(AllBlockPartials.SHAFTLESS_COGWHEEL, blockState);
-        standardKineticRotationTransform(superBuffer, te, light).renderInto(ms, vb);
+    protected SuperByteBuffer getRotatedModel(KineticTileEntity te, BlockState state) {
+        return CachedBufferer.partial(AllBlockPartials.SHAFTLESS_COGWHEEL, state);
     }
 }
