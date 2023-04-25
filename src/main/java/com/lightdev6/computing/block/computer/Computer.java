@@ -77,7 +77,7 @@ public class Computer extends Block implements EntityBlock, ICogWheel {
 
     @Override
     public SpeedLevel getMinimumRequiredSpeedLevel() {
-        return SpeedLevel.FAST;
+        return SpeedLevel.MEDIUM;
     }
 
 }
