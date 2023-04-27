@@ -40,5 +40,6 @@ public class RedstoneDetector extends Block implements EntityBlock {
     @Override
     public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
         super.neighborChanged(pState, pLevel, pPos, pBlock, pFromPos, pIsMoving);
+        if ()
     }
 }
