@@ -44,7 +44,7 @@ public class Computer extends Block implements EntityBlock, ICogWheel {
                     Computing.runProgram(computer.getScript(), Vec3.atCenterOf(blockPos), player);
                 } else if(item.getItem().equals(Items.QUARTZ)){
                     Computing.runFunctionProgram("f", Arrays.asList(13.0),computer.getScript(), Vec3.atCenterOf(blockPos), player);
-                } else {
+                } else if (item.getItem().equals(Items.PAPER)){
                     computer.setScript(itemName);
                     player.sendSystemMessage(Component.literal("Set script"));
                 }

@@ -1,6 +1,7 @@
 package com.lightdev6.computing;
 
 import com.lightdev6.computing.block.computer.Computer;
+import com.lightdev6.computing.block.redstonedetector.RedstoneDetector;
 import com.simibubi.create.content.AllSections;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.BlockEntry;
@@ -21,6 +22,14 @@ public class AllBlocks {
 
     public static final BlockEntry<Computer> COMPUTER = REGISTRATE
             .block("computer", Computer::new)
+            .initialProperties(() -> Blocks.STONE)
+            .transform(pickaxe())
+            .simpleItem()
+            .properties(BlockBehaviour.Properties::noOcclusion)
+            .register();
+
+    public static final BlockEntry<RedstoneDetector> REDSTONE_DETECTOR = REGISTRATE
+            .block("redstone_detector", RedstoneDetector::new)
             .initialProperties(() -> Blocks.STONE)
             .transform(pickaxe())
             .simpleItem()
