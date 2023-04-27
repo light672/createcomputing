@@ -43,4 +43,10 @@ public class RedstoneDetectorBlockEntity extends KineticTileEntity {
     protected void addStressImpactStats(List<Component> tooltip, float stressAtBase) {
         super.addStressImpactStats(tooltip, stressAtBase);
     }
+
+    public void tick(){
+        //this does not call on the client btw
+
+    }
+
 }
