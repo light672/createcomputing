@@ -40,7 +40,6 @@ public class CScript {
         resolver.resolve(statements);
         if (hadError) return;
         interpreter.interpret(statements);
-
     }
     private void runFunction (String source, String functionName, List<Object> arguments){
         Scanner scanner = new Scanner(source, this);
@@ -54,7 +53,6 @@ public class CScript {
         resolver.resolve(statements);
         if (hadError) return;
         interpreter.callFunction(statements, functionName,arguments);
-        //System.out.println(new AstPrinter().print(expression));
     }
 
     void error(int line, String message){

@@ -3,6 +3,7 @@ package com.lightdev6.computing;
 import com.lightdev6.cscript.CScript;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -35,8 +36,10 @@ public class Computing {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
+
     private void commonSetup(final FMLCommonSetupEvent event) {
         LOGGER.info("HELLO FROM COMMON SETUP");
+        AllPackets.registerPackets();
     }
 
     @SubscribeEvent
@@ -63,5 +66,9 @@ public class Computing {
            new CScript(source, player, function, arguments);
         });
         thread.start();
+    }
+
+    public static ResourceLocation asResource(String path) {
+        return new ResourceLocation(MOD_ID, path);
     }
 }

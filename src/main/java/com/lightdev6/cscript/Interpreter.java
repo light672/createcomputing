@@ -50,6 +50,17 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
             @Override
             public String toString(){ return "<native fn> ";}
         });
+        globals.define("string", new CScriptCallable() {
+            @Override
+            public int arity() {
+                return 1;
+            }
+
+            @Override
+            public Object call(Interpreter interpreter, List<Object> arguments) {
+                return arguments.get(0).toString();
+            }
+        });
     }
 
     @Override

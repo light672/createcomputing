@@ -2,11 +2,13 @@ package com.lightdev6.computing;
 
 import com.lightdev6.computing.block.computer.Computer;
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetector;
-import com.simibubi.create.content.AllSections;
+import com.simibubi.create.foundation.data.AssetLookup;
 import com.tterrag.registrate.builders.BlockBuilder;
+import com.tterrag.registrate.builders.ItemBuilder;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -41,4 +43,5 @@ public class AllBlocks {
     }
 
     public static void register(){}
+
 }
