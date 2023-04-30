@@ -18,10 +18,14 @@ import com.simibubi.create.foundation.gui.element.GuiGameElement;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.utility.Components;
 import com.simibubi.create.foundation.utility.Lang;
+import com.sun.jna.platform.win32.WinDef;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineEditBox;
+import net.minecraft.client.gui.components.Whence;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
 import org.lwjgl.glfw.GLFW;
 
 public class ComputerScreen extends AbstractSimiScreen {
@@ -85,11 +89,33 @@ public class ComputerScreen extends AbstractSimiScreen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256 && this.shouldCloseOnEsc()){
+        if (keyCode == 256 && this.shouldCloseOnEsc()) {
             this.onClose();
             return true;
         }
+        if (keyCode == GLFW.GLFW_KEY_TAB) {
+            terminal.textField.insertText("    ");
+            return true;
+        }
+        if (keyCode == GLFW.GLFW_KEY_LEFT_BRACKET) {
+            return true;
+        }
         return terminal.keyPressed(keyCode, scanCode, modifiers);
+
+
+    }
+
+    @Override
+    public boolean charTyped(char p_94683_, int p_94684_) {
+        if (p_94683_ == "{".charAt(0)){
+            terminal.textField.insertText("{");
+            terminal.textField.insertText("}");
+            terminal.textField.setSelecting(true);
+            terminal.textField.seekCursor(Whence.RELATIVE, -1);
+            terminal.textField.setSelecting(false);
+            return true;
+        }
+        return super.charTyped(p_94683_, p_94684_);
     }
 
     private void confirm(){
