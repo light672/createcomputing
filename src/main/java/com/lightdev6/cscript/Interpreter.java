@@ -2,10 +2,7 @@ package com.lightdev6.cscript;
 
 import ca.weblite.objc.Runtime;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class RuntimeError extends RuntimeException {
     final Token token;
@@ -251,6 +248,31 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
                 Thread.sleep(50);
             } catch (InterruptedException e){
                 break;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitForStmt(Stmt.For stmt) {
+        double loopAmount;
+        if (evaluate(stmt.left).getClass() == double.class){
+            loopAmount = (double)evaluate(stmt.left);
+        }
+        else {
+            throw new RuntimeError(stmt.split, "Expected a number after ':'.");
+        }
+        if (stmt.body instanceof Stmt.Block block) {
+            Environment environment = new Environment(this.environment);
+            environment.define(stmt.variable.lexeme, 0);
+            for (int i = 0; i < loopAmount; i++) {
+                executeBlock(block.statements, environment);
+            }
+        }
+        else {
+            Stmt.Block block = new Stmt.Block(Arrays.asList(stmt.body));
+            for (int i = 0; i < loopAmount; i++) {
+                executeBlock(block.statements, environment);
             }
         }
         return null;

@@ -49,7 +49,7 @@ public class ComputerScreen extends AbstractSimiScreen {
 
     @Override
     protected void init() {
-        setWindowSize(background.width, background.height);
+        setWindowSize(213, 77);
         super.init();
 
         int x = guiLeft;
@@ -64,9 +64,10 @@ public class ComputerScreen extends AbstractSimiScreen {
         nameField.setValue(redstoneDetector.getSignalName());
         addRenderableWidget(nameField);*/
 
-        terminal = new MultiLineEditBox(font, x + 49, y + 60, 131, 100, Components.immutableEmpty(), Components.immutableEmpty());
+        terminal = new MultiLineEditBox(font, x, y , 213, 77, Components.immutableEmpty(), Components.immutableEmpty());
         terminal.setValue("");
         setInitialFocus(terminal);
+
         addRenderableWidget(terminal);
 
 
@@ -78,11 +79,11 @@ public class ComputerScreen extends AbstractSimiScreen {
     protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
         int x = guiLeft;
         int y = guiTop;
-        background.render(ms, x, y, this);
-        drawCenteredString(ms, font, title,  x + (background.width - 8) / 2, y + 3, 0xFFFFFF);
-        GuiGameElement.of(AllItems.ANDESITE_ALLOY.asStack())
-                .at(x + 22, y + 23, 0)
-                .render(ms);
+        //background.render(ms, x, y, this);
+        //drawCenteredString(ms, font, title,  x + (background.width - 8) / 2, y + 3, 0xFFFFFF);
+        //GuiGameElement.of(AllItems.ANDESITE_ALLOY.asStack())
+        //        .at(x + 22, y + 23, 0)
+        //        .render(ms);
 
 
     }
@@ -93,28 +94,40 @@ public class ComputerScreen extends AbstractSimiScreen {
             this.onClose();
             return true;
         }
-        if (keyCode == GLFW.GLFW_KEY_TAB) {
+        /*if (keyCode == GLFW.GLFW_KEY_TAB) {
             terminal.textField.insertText("    ");
             return true;
         }
-        if (keyCode == GLFW.GLFW_KEY_LEFT_BRACKET) {
-            return true;
-        }
+
+        //getting a character by the index of the cursor will always return the character infront of the cursor.
+        if (keyCode == GLFW.GLFW_KEY_ENTER){
+            if (terminal.textField.cursor != 0) {
+                if (terminal.getValue().charAt(terminal.textField.cursor - 1) == "{".charAt(0)) {
+                    terminal.textField.insertText("\n    \n}");
+                    terminal.textField.cursor -= 2;
+                    terminal.textField.selectCursor = terminal.textField.cursor;
+                    return true;
+
+                }
+
+            }
+        }*/
         return terminal.keyPressed(keyCode, scanCode, modifiers);
+
 
 
     }
 
     @Override
     public boolean charTyped(char p_94683_, int p_94684_) {
-        if (p_94683_ == "{".charAt(0)){
+        /*if (p_94683_ == "{".charAt(0)){
             terminal.textField.insertText("{");
+            int cursor = terminal.textField.cursor;
             terminal.textField.insertText("}");
-            terminal.textField.setSelecting(true);
-            terminal.textField.seekCursor(Whence.RELATIVE, -1);
-            terminal.textField.setSelecting(false);
+            terminal.textField.cursor = cursor;
+            terminal.textField.selectCursor = cursor;
             return true;
-        }
+        }*/
         return super.charTyped(p_94683_, p_94684_);
     }
 

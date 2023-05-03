@@ -13,6 +13,7 @@ abstract class Stmt {
     R visitReturnStmt(Return stmt);
     R visitVarStmt(Var stmt);
     R visitWhileStmt(While stmt);
+    R visitForStmt(For stmt);
   }
   static class Block extends Stmt {
     Block(List<Stmt> statements) {
@@ -138,6 +139,24 @@ abstract class Stmt {
     }
 
     final Expr condition;
+    final Stmt body;
+  }
+  static class For extends Stmt {
+    For(Token variable, Expr left, Token split, Stmt body) {
+     this.variable = variable;
+     this.left = left;
+     this.split = split;
+     this.body = body;
+    }
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitForStmt(this);
+    }
+
+    final Token variable;
+    final Expr left;
+    final Token split;
     final Stmt body;
   }
 

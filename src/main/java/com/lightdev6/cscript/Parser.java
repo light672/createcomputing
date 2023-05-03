@@ -281,7 +281,7 @@ class Parser {
     }
 
     private Stmt forStatement(){
-        consume(LEFT_PAREN, "Expect '(' after 'for'.");
+        /*consume(LEFT_PAREN, "Expect '(' after 'for'.");
         Stmt initializer;
         if (match(SEMICOLON)){
             initializer = null;
@@ -314,8 +314,23 @@ class Parser {
             body = new Stmt.Block(Arrays.asList(initializer, body));
         }
 
-        return body;
+        return body;*/
 
+        consume(LEFT_PAREN, "Expect '(' after 'for'.");
+        Stmt initializer;
+
+        if (match(VAR)){
+            initializer = varDeclaration();
+        } else {
+            throw error(peek(), "Expect initializer after '('.");
+        }
+
+        consume(COLON, "Expect ':' after initializer.");
+        Expr left = expression();
+        consume(RIGHT_PAREN,"Expect ')' after loop amount.");
+        Stmt body = statement();
+
+        return body;
     }
 
     private Stmt whileStatement(){

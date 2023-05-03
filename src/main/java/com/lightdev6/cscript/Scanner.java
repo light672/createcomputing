@@ -76,6 +76,7 @@ public class Scanner {
                 addToken(match('=') ? PLUS_EQUAL : PLUS);
                 break;
             case ';': addToken(SEMICOLON); break;
+            case ':': addToken(COLON); break;
             case '*':
                 addToken(match('=') ? STAR_EQUAL : STAR);
                 break;
