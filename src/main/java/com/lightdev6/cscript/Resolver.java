@@ -133,6 +133,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
 
     @Override
     public Void visitForStmt(Stmt.For stmt) {
+        resolveFor(stmt);
         return null;
     }
 
@@ -255,6 +256,19 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
         resolve(function.body);
         endScope();
         currentFunction = enclosingFunction;
+    }
+
+    private void resolveFor(Stmt.For forr){
+        resolve(forr.left);
+        beginScope();
+        declare(forr.variable);
+        define(forr.variable);
+        if (forr.body instanceof Stmt.Block block){
+            resolve(block.statements);
+        } else {
+            resolve(forr.body);
+        }
+        endScope();
     }
 
     private void resolve(Stmt stmt){

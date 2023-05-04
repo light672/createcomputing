@@ -1,31 +1,19 @@
 package com.lightdev6.computing.block.computer;
 
-/*
 
- */
 
 
 import com.lightdev6.computing.AllPackets;
-import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorBlockEntity;
-import com.lightdev6.computing.packets.ConfigureRedstoneDetectorSignalPacket;
+import com.lightdev6.computing.packets.ConfigureComputerScriptPacket;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.simibubi.create.AllItems;
-import com.simibubi.create.CreateClient;
 import com.simibubi.create.foundation.gui.AbstractSimiScreen;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import com.simibubi.create.foundation.gui.AllIcons;
-import com.simibubi.create.foundation.gui.element.GuiGameElement;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.utility.Components;
 import com.simibubi.create.foundation.utility.Lang;
-import com.sun.jna.platform.win32.WinDef;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineEditBox;
-import net.minecraft.client.gui.components.Whence;
-import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundSource;
 import org.lwjgl.glfw.GLFW;
 
 public class ComputerScreen extends AbstractSimiScreen {
@@ -65,7 +53,7 @@ public class ComputerScreen extends AbstractSimiScreen {
         addRenderableWidget(nameField);*/
 
         terminal = new MultiLineEditBox(font, x, y , 213, 77, Components.immutableEmpty(), Components.immutableEmpty());
-        terminal.setValue("");
+        terminal.setValue(computer.getScript());
         setInitialFocus(terminal);
 
         addRenderableWidget(terminal);
@@ -91,10 +79,10 @@ public class ComputerScreen extends AbstractSimiScreen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == 256 && this.shouldCloseOnEsc()) {
-            this.onClose();
+            confirm();
             return true;
         }
-        /*if (keyCode == GLFW.GLFW_KEY_TAB) {
+        if (keyCode == GLFW.GLFW_KEY_TAB) {
             terminal.textField.insertText("    ");
             return true;
         }
@@ -111,7 +99,7 @@ public class ComputerScreen extends AbstractSimiScreen {
                 }
 
             }
-        }*/
+        }
         return terminal.keyPressed(keyCode, scanCode, modifiers);
 
 
@@ -128,12 +116,19 @@ public class ComputerScreen extends AbstractSimiScreen {
             terminal.textField.selectCursor = cursor;
             return true;
         }*/
+        if (p_94683_ == "(".charAt(0)){
+            terminal.textField.insertText("()");
+            terminal.textField.cursor -= 1;
+            terminal.textField.selectCursor = terminal.textField.cursor;
+            return true;
+        }
+
+
         return super.charTyped(p_94683_, p_94684_);
     }
 
     private void confirm(){
-        System.out.println(terminal.getValue());
-        //AllPackets.channel.sendToServer(new ConfigureRedstoneDetectorSignalPacket(blockPos, terminal.getValue()));
-        //onClose();
+        AllPackets.channel.sendToServer(new ConfigureComputerScriptPacket(blockPos, terminal.getValue()));
+        onClose();
     }
 }

@@ -3,8 +3,6 @@ package com.lightdev6.computing.block.redstonedetector;
 import com.lightdev6.computing.AllTileEntities;
 import com.lightdev6.computing.Computing;
 import com.lightdev6.computing.block.computer.ComputerBlockEntity;
-import com.lightdev6.cscript.CScript;
-import com.lightdev6.cscript.Environment;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.block.ITE;
 import com.simibubi.create.foundation.gui.ScreenOpener;
@@ -12,15 +10,12 @@ import com.simibubi.create.foundation.utility.Iterate;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -36,7 +31,6 @@ import net.minecraftforge.fml.DistExecutor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.UUID;
 
 public class RedstoneDetector extends Block implements EntityBlock, ITE<RedstoneDetectorBlockEntity> {
 

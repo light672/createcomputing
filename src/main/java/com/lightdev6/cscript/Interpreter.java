@@ -255,26 +255,27 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Void visitForStmt(Stmt.For stmt) {
-        double loopAmount;
-        if (evaluate(stmt.left).getClass() == double.class){
-            loopAmount = (double)evaluate(stmt.left);
-        }
-        else {
-            throw new RuntimeError(stmt.split, "Expected a number after ':'.");
-        }
+        /*double loopAmount = (double)evaluate(stmt.left);
+        Environment environment = new Environment(this.environment);
+        environment.define(stmt.variable.lexeme, 0.0d);
+
+
         if (stmt.body instanceof Stmt.Block block) {
-            Environment environment = new Environment(this.environment);
-            environment.define(stmt.variable.lexeme, 0);
             for (int i = 0; i < loopAmount; i++) {
+                environment.assign(stmt.variable, i);
                 executeBlock(block.statements, environment);
             }
         }
         else {
             Stmt.Block block = new Stmt.Block(Arrays.asList(stmt.body));
             for (int i = 0; i < loopAmount; i++) {
+                //Expr.Assign expr = new Expr.Assign(stmt.variable, new Expr.Literal(0));
+                environment.assign(stmt.variable, i);
                 executeBlock(block.statements, environment);
             }
-        }
+        }*/
+        CScriptFor forr = new CScriptFor(stmt, environment);
+        forr.run(this);
         return null;
     }
 

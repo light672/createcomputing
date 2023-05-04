@@ -13,9 +13,7 @@ import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.utility.Components;
 import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
@@ -103,7 +101,6 @@ public class RedstoneDetectorScreen extends AbstractSimiScreen {
     }
 
     private void confirm(){
-        System.out.println(nameField.getValue());
         AllPackets.channel.sendToServer(new ConfigureRedstoneDetectorSignalPacket(blockPos, nameField.getValue()));
         onClose();
     }

@@ -22,7 +22,6 @@ public class ConfigureRedstoneDetectorSignalPacket extends TileEntityConfigurati
 
     @Override
     protected void writeSettings(FriendlyByteBuf buffer) {
-        System.out.println("rain drop falling from da ceilin");
         CompoundTag tag = new CompoundTag();
         tag.putString("SignalName", this.signalName);
         buffer.writeNbt(tag);

@@ -2,8 +2,6 @@ package com.lightdev6.computing.block.computer;
 
 import com.lightdev6.computing.Computing;
 import com.lightdev6.computing.AllTileEntities;
-import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorBlockEntity;
-import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorScreen;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.contraptions.relays.elementary.ICogWheel;
 import com.simibubi.create.foundation.block.ITE;

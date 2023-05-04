@@ -280,57 +280,38 @@ class Parser {
         return new Stmt.Return(keyword, value);
     }
 
-    private Stmt forStatement(){
-        /*consume(LEFT_PAREN, "Expect '(' after 'for'.");
-        Stmt initializer;
-        if (match(SEMICOLON)){
-            initializer = null;
-        } else if (match(VAR)){
-            initializer = varDeclaration();
-        } else {
-            initializer = expressionStatement();
-        }
-
-        Expr condition = null;
-        if (!check(SEMICOLON)){
-            condition = expression();
-        }
-        consume(SEMICOLON, "Expect ';' after loop condition.");
-
-        Expr increment = null;
+    private Stmt forStatement() {
+        /*
+        Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
+        consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
+        List<Token> parameters = new ArrayList<>();
         if(!check(RIGHT_PAREN)){
-            increment = expression();
+            do{
+                if (parameters.size() >= 255){
+                    error(peek(), "Can't have more that 255 parameters.");
+                }
+                parameters.add(consume(IDENTIFIER, "Expect parameter name."));
+            } while (match(COMMA));
         }
-        consume(RIGHT_PAREN, "Expect ')' after for clauses.");
-        Stmt body = statement();
-        if(increment != null){
-            body = new Stmt.Block(Arrays.asList(body, new Stmt.Expression(increment)));
-        }
-
-        if (condition == null) condition = new Expr.Literal(true);
-        body = new Stmt.While(condition, body);
-
-        if (initializer != null){
-            body = new Stmt.Block(Arrays.asList(initializer, body));
-        }
-
-        return body;*/
-
+        consume(RIGHT_PAREN, "Expect ')' after parameters.");
+        consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
+        List<Stmt> body = block();
+         */
         consume(LEFT_PAREN, "Expect '(' after 'for'.");
-        Stmt initializer;
+        Token initializer;
 
-        if (match(VAR)){
-            initializer = varDeclaration();
+        if (match(IDENTIFIER)){
+            initializer = previous();
         } else {
-            throw error(peek(), "Expect initializer after '('.");
+            throw error(previous(), "Expect initializer after '('.");
         }
 
-        consume(COLON, "Expect ':' after initializer.");
+        Token colon = consume(COLON, "Expect ':' after initializer.");
         Expr left = expression();
         consume(RIGHT_PAREN,"Expect ')' after loop amount.");
         Stmt body = statement();
 
-        return body;
+        return new Stmt.For(initializer, left, colon, body);
     }
 
     private Stmt whileStatement(){

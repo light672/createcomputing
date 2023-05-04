@@ -23,11 +23,14 @@ public class Environment {
 
         if (enclosing != null) return enclosing.get(name);
 
-        throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.'");
+        throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
     }
 
     void define(String name, Object value){
         values.put(name, value);
+    }
+    void remove(Token name){
+        values.remove(name);
     }
     Object getAt(int distance, String name){
         return ancestor(distance).values.get(name);
