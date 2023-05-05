@@ -63,7 +63,7 @@ public class ComputerScreen extends AbstractSimiScreen {
         run.setToolTip(Component.literal("Run Script"));
         addRenderableWidget(run);
 
-        save = new IconButton(x - 20,  + 20, AllIcons.I_CONFIG_SAVE);
+        save = new IconButton(x - 20,  y + 20, AllIcons.I_CONFIG_SAVE);
         save.withCallback(() -> {
             save();
         });
