@@ -4,16 +4,20 @@ package com.lightdev6.computing.block.computer;
 
 
 import com.lightdev6.computing.AllPackets;
+import com.lightdev6.computing.Computing;
+import com.lightdev6.computing.packets.ComputerSendRunPacket;
 import com.lightdev6.computing.packets.ConfigureComputerScriptPacket;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.gui.AbstractSimiScreen;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
+import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
 import com.simibubi.create.foundation.utility.Components;
 import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec3;
 import org.lwjgl.glfw.GLFW;
 
 public class ComputerScreen extends AbstractSimiScreen {
@@ -21,7 +25,7 @@ public class ComputerScreen extends AbstractSimiScreen {
     private MultiLineEditBox terminal;
     private BlockPos blockPos;
     private IconButton abort;
-    private IconButton confirm;
+    private IconButton run;
 
     private final Component abortLabel = Lang.translateDirect("action.discard");
     private final Component confirmLabel = Lang.translateDirect("action.saveToFile");
@@ -37,7 +41,7 @@ public class ComputerScreen extends AbstractSimiScreen {
 
     @Override
     protected void init() {
-        setWindowSize(213, 77);
+        setWindowSize(426, 254);
         super.init();
 
         int x = guiLeft;
@@ -52,7 +56,14 @@ public class ComputerScreen extends AbstractSimiScreen {
         nameField.setValue(redstoneDetector.getSignalName());
         addRenderableWidget(nameField);*/
 
-        terminal = new MultiLineEditBox(font, x, y , 213, 77, Components.immutableEmpty(), Components.immutableEmpty());
+        run = new IconButton(x - 20, y, AllIcons.I_CONFIRM);
+        run.withCallback(() -> {
+            run();
+        });
+        run.setToolTip(Component.literal("Run Script"));
+        addRenderableWidget(run);
+
+        terminal = new MultiLineEditBox(font, x, y, 426, 200, Components.immutableEmpty(), Components.immutableEmpty());
         terminal.setValue(computer.getScript());
         setInitialFocus(terminal);
 
@@ -82,19 +93,19 @@ public class ComputerScreen extends AbstractSimiScreen {
             confirm();
             return true;
         }
-        if (keyCode == GLFW.GLFW_KEY_TAB) {
+
+        System.out.println(keyCode);
+        if (keyCode == GLFW.GLFW_KEY_TAB && terminal.isFocused()) {
             terminal.textField.insertText("    ");
-            return true;
         }
 
         //getting a character by the index of the cursor will always return the character infront of the cursor.
-        if (keyCode == GLFW.GLFW_KEY_ENTER){
+        if (keyCode == GLFW.GLFW_KEY_ENTER && terminal.isFocused()){
             if (terminal.textField.cursor != 0) {
                 if (terminal.getValue().charAt(terminal.textField.cursor - 1) == "{".charAt(0)) {
                     terminal.textField.insertText("\n    \n}");
                     terminal.textField.cursor -= 2;
                     terminal.textField.selectCursor = terminal.textField.cursor;
-                    return true;
 
                 }
 
@@ -108,14 +119,14 @@ public class ComputerScreen extends AbstractSimiScreen {
 
     @Override
     public boolean charTyped(char p_94683_, int p_94684_) {
-        /*if (p_94683_ == "{".charAt(0)){
+        if (p_94683_ == "{".charAt(0)){
             terminal.textField.insertText("{");
             int cursor = terminal.textField.cursor;
             terminal.textField.insertText("}");
             terminal.textField.cursor = cursor;
             terminal.textField.selectCursor = cursor;
             return true;
-        }*/
+        }
         if (p_94683_ == "(".charAt(0)){
             terminal.textField.insertText("()");
             terminal.textField.cursor -= 1;
@@ -130,5 +141,9 @@ public class ComputerScreen extends AbstractSimiScreen {
     private void confirm(){
         AllPackets.channel.sendToServer(new ConfigureComputerScriptPacket(blockPos, terminal.getValue()));
         onClose();
+    }
+
+    private void run(){
+        AllPackets.channel.sendToServer(new ComputerSendRunPacket(blockPos));
     }
 }

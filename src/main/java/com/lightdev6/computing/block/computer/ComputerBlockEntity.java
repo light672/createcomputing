@@ -4,6 +4,7 @@ import com.lightdev6.computing.AllTileEntities;
 import com.simibubi.create.content.contraptions.base.KineticTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,6 +18,8 @@ public class ComputerBlockEntity extends KineticTileEntity {
     public ComputerBlockEntity(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState) {
         super(AllTileEntities.COMPUTER.get(), blockPos, blockState);
     }
+
+
 
     public void setScript(String script){
         this.script = script;

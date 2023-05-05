@@ -37,7 +37,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
             @Override public Object call(Interpreter interpreter, List<Object> arguments){
                 try {
-                    Thread.sleep(Math.round((double)arguments.get(0)));
+                    Thread.sleep(Math.round((double)arguments.get(0) * 1000));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
