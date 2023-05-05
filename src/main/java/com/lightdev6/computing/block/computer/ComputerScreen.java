@@ -24,7 +24,7 @@ public class ComputerScreen extends AbstractSimiScreen {
     private AllGuiTextures background;
     private MultiLineEditBox terminal;
     private BlockPos blockPos;
-    private IconButton abort;
+    private IconButton save;
     private IconButton run;
 
     private final Component abortLabel = Lang.translateDirect("action.discard");
@@ -56,12 +56,19 @@ public class ComputerScreen extends AbstractSimiScreen {
         nameField.setValue(redstoneDetector.getSignalName());
         addRenderableWidget(nameField);*/
 
-        run = new IconButton(x - 20, y, AllIcons.I_CONFIRM);
+        run = new IconButton(x - 20, y, AllIcons.I_PLAY);
         run.withCallback(() -> {
             run();
         });
         run.setToolTip(Component.literal("Run Script"));
         addRenderableWidget(run);
+
+        save = new IconButton(x - 20,  + 20, AllIcons.I_CONFIG_SAVE);
+        save.withCallback(() -> {
+            save();
+        });
+        save.setToolTip(Component.literal("Save Script"));
+        addRenderableWidget(save);
 
         terminal = new MultiLineEditBox(font, x, y, 426, 200, Components.immutableEmpty(), Components.immutableEmpty());
         terminal.setValue(computer.getScript());
@@ -141,6 +148,10 @@ public class ComputerScreen extends AbstractSimiScreen {
     private void confirm(){
         AllPackets.channel.sendToServer(new ConfigureComputerScriptPacket(blockPos, terminal.getValue()));
         onClose();
+    }
+
+    private void save(){
+        AllPackets.channel.sendToServer(new ConfigureComputerScriptPacket(blockPos, terminal.getValue()));
     }
 
     private void run(){
