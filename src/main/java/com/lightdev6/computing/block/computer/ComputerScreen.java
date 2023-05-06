@@ -72,14 +72,6 @@ public class ComputerScreen extends AbstractSimiScreen {
         int y = guiTop;
 
 
-        /*nameField = new EditBox(font, x+49, y + 26, 131, 10, Components.immutableEmpty());
-        nameField.setTextColor(-1);
-        nameField.setTextColorUneditable(-1);
-        nameField.setBordered(false);
-        nameField.changeFocus(true);
-        //setFocused(nameField);
-        nameField.setValue(redstoneDetector.getSignalName());
-        addRenderableWidget(nameField);*/
 
         run = new IconButton(x - 20, y, AllIcons.I_PLAY);
         run.withCallback(() -> {
