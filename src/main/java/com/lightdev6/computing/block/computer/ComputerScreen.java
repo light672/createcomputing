@@ -34,8 +34,6 @@ public class ComputerScreen extends AbstractSimiScreen {
     private IconButton run;
     private IconButton clear;
 
-    private final Component abortLabel = Lang.translateDirect("action.discard");
-    private final Component confirmLabel = Lang.translateDirect("action.saveToFile");
 
     private ComputerBlockEntity computer;
 
@@ -113,11 +111,6 @@ public class ComputerScreen extends AbstractSimiScreen {
     protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
         int x = guiLeft;
         int y = guiTop;
-        //background.render(ms, x, y, this);
-        //drawCenteredString(ms, font, title,  x + (background.width - 8) / 2, y + 3, 0xFFFFFF);
-        //GuiGameElement.of(AllItems.ANDESITE_ALLOY.asStack())
-        //        .at(x + 22, y + 23, 0)
-        //        .render(ms);
 
 
     }
@@ -129,7 +122,6 @@ public class ComputerScreen extends AbstractSimiScreen {
             return true;
         }
 
-        System.out.println(keyCode);
         if (keyCode == GLFW.GLFW_KEY_TAB && terminal.isFocused()) {
             terminal.textField.insertText("    ");
         }
@@ -154,14 +146,6 @@ public class ComputerScreen extends AbstractSimiScreen {
 
     @Override
     public boolean charTyped(char p_94683_, int p_94684_) {
-        if (p_94683_ == "{".charAt(0)){
-            terminal.textField.insertText("{");
-            int cursor = terminal.textField.cursor;
-            terminal.textField.insertText("}");
-            terminal.textField.cursor = cursor;
-            terminal.textField.selectCursor = cursor;
-            return true;
-        }
         if (p_94683_ == "(".charAt(0)){
             terminal.textField.insertText("()");
             terminal.textField.cursor -= 1;
