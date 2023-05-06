@@ -2,6 +2,7 @@ package com.lightdev6.computing;
 
 import com.lightdev6.computing.block.computer.Computer;
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetector;
+import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.builders.ItemBuilder;
@@ -34,14 +35,21 @@ public class AllBlocks {
             .block("redstone_detector", RedstoneDetector::new)
             .initialProperties(() -> Blocks.STONE)
             .transform(pickaxe())
-            .simpleItem()
             .properties(BlockBehaviour.Properties::noOcclusion)
+            .item(RedstoneDetectorItem::new)
+            .transform(customItemModel())
             .register();
 
     public static <T extends Block, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> pickaxe() {
         return b -> b.tag(BlockTags.MINEABLE_WITH_PICKAXE);
     }
+    public static <I extends BlockItem, P> NonNullFunction<ItemBuilder<I, P>, P> customItemModel() {
+        return b -> b.model(AssetLookup::customItemModel)
+                .build();
+    }
 
     public static void register(){}
+
+
 
 }
