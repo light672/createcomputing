@@ -14,6 +14,7 @@ import java.util.List;
 public class ComputerBlockEntity extends KineticTileEntity {
 
     private String script = "";
+    private String terminal = "";
 
     public ComputerBlockEntity(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState) {
         super(AllTileEntities.COMPUTER.get(), blockPos, blockState);
@@ -24,9 +25,14 @@ public class ComputerBlockEntity extends KineticTileEntity {
     public void setScript(String script){
         this.script = script;
     }
-
     public String getScript(){
         return script;
+    }
+    public void setTerminal(String terminal){
+        this.terminal = terminal;
+    }
+    public String getTerminal(){
+        return terminal;
     }
     @Override
     public boolean isSpeedRequirementFulfilled() {return super.isSpeedRequirementFulfilled();}
@@ -36,12 +42,14 @@ public class ComputerBlockEntity extends KineticTileEntity {
     protected void read(CompoundTag compound, boolean clientPacket) {
         super.read(compound, clientPacket);
         this.script = compound.getString("Script");
+        this.terminal = compound.getString("Terminal");
     }
 
     @Override
     protected void write(CompoundTag compound, boolean clientPacket) {
         super.write(compound, clientPacket);
         compound.putString("Script", this.script);
+        compound.putString("Terminal", this.terminal);
     }
 
     @Override

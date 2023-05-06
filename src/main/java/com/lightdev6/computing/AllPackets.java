@@ -1,8 +1,6 @@
 package com.lightdev6.computing;
 
-import com.lightdev6.computing.packets.ComputerSendRunPacket;
-import com.lightdev6.computing.packets.ConfigureComputerScriptPacket;
-import com.lightdev6.computing.packets.ConfigureRedstoneDetectorSignalPacket;
+import com.lightdev6.computing.packets.*;
 import com.simibubi.create.Create;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.minecraft.core.BlockPos;
@@ -115,7 +113,9 @@ import net.minecraftforge.network.simple.SimpleChannel;
 public enum AllPackets {
     CONFIGURE_REDSTONE_DETECTOR_SIGNAL(ConfigureRedstoneDetectorSignalPacket.class, ConfigureRedstoneDetectorSignalPacket::new, PLAY_TO_SERVER),
     CONFIGURE_COMPUTER_SCRIPT(ConfigureComputerScriptPacket.class, ConfigureComputerScriptPacket::new, PLAY_TO_SERVER),
-    COMPUTER_SEND_RUN(ComputerSendRunPacket.class, ComputerSendRunPacket::new, PLAY_TO_SERVER)
+    COMPUTER_SEND_RUN(ComputerSendRunPacket.class, ComputerSendRunPacket::new, PLAY_TO_SERVER),
+    COMPUTER_SEND_TERMINAL(ComputerSendTerminalPacket.class, ComputerSendTerminalPacket::new, PLAY_TO_SERVER),
+    COMPUTER_REQUEST_TERMINAL_UPDATE(ComputerRequestTerminalUpdatePacket.class, ComputerRequestTerminalUpdatePacket::new, PLAY_TO_SERVER)
     ;
 
     public static final ResourceLocation CHANNEL_NAME = Computing.asResource("main");

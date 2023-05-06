@@ -1,7 +1,12 @@
 package com.lightdev6.cscript;
 
+import com.lightdev6.computing.block.computer.ComputerBlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,15 +21,15 @@ public class CScript {
 
     boolean hadError = false;
     boolean hadRuntimeError = false;
-    private final Player player;
+    private ComputerBlockEntity computer;
 
-    public CScript(String source, Player player){
-        this.player = player;
+    public CScript(String source, ComputerBlockEntity computer){
+        this.computer = computer;
         run(source);
     }
 
-    public CScript(String source, Player player, String functionName, List<Object> arguments){
-        this.player = player;
+    public CScript(String source, ComputerBlockEntity computer, String functionName, List<Object> arguments){
+        this.computer = computer;
         runFunction(source, functionName, arguments);
     }
 
@@ -77,7 +82,8 @@ public class CScript {
     }
 
     public void log(String message){
-        player.sendSystemMessage(Component.literal(message));
+        System.out.println(message);
+        computer.setTerminal(computer.getTerminal() + message + "\n");
     }
 
 }

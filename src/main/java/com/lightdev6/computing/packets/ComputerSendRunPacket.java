@@ -33,7 +33,7 @@ public class ComputerSendRunPacket extends SimplePacketBase {
             ServerPlayer player = ctx.getSender();
             ServerLevel level = player.getLevel();
             if (level.getBlockEntity(pos) instanceof ComputerBlockEntity computer){
-                Computing.runProgram(computer.getScript(), Vec3.atCenterOf(pos), player);
+                Computing.runProgram(computer.getScript(), computer);
             }
         });
         ctx.setPacketHandled(true);

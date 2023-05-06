@@ -5,47 +5,72 @@ package com.lightdev6.computing.block.computer;
 
 import com.lightdev6.computing.AllPackets;
 import com.lightdev6.computing.Computing;
+import com.lightdev6.computing.gui.MultiLineTextBox;
+import com.lightdev6.computing.packets.ComputerRequestTerminalUpdatePacket;
 import com.lightdev6.computing.packets.ComputerSendRunPacket;
+import com.lightdev6.computing.packets.ComputerSendTerminalPacket;
 import com.lightdev6.computing.packets.ConfigureComputerScriptPacket;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.gui.AbstractSimiScreen;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
+import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.utility.Components;
 import com.simibubi.create.foundation.utility.Lang;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineEditBox;
+import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import org.lwjgl.glfw.GLFW;
 
 public class ComputerScreen extends AbstractSimiScreen {
-    private AllGuiTextures background;
     private MultiLineEditBox terminal;
+    private MultiLineTextBox output;
     private BlockPos blockPos;
     private IconButton save;
     private IconButton run;
+    private IconButton clear;
 
     private final Component abortLabel = Lang.translateDirect("action.discard");
     private final Component confirmLabel = Lang.translateDirect("action.saveToFile");
 
     private ComputerBlockEntity computer;
 
+    private int timer;
+
     public ComputerScreen(ComputerBlockEntity computer){
         super(Component.literal("Edit Signal Name"));
-        background = AllGuiTextures.SCHEMATIC_PROMPT;
         this.computer = computer;
         this.blockPos = computer.getBlockPos();
     }
 
+
+    @Override
+    public void tick() {
+        super.tick();
+        computer.getUpdateTag();
+        output.setValue(computer.getTerminal());
+        if (timer >= 4){
+            timer = 0;
+            AllPackets.channel.sendToServer(new ComputerRequestTerminalUpdatePacket(blockPos));
+        } else {
+            timer++;
+        }
+    }
+
     @Override
     protected void init() {
-        setWindowSize(426, 254);
+        int width = 380;
+        int height = 210;
+        setWindowSize(width, height);
         super.init();
 
         int x = guiLeft;
         int y = guiTop;
+
 
         /*nameField = new EditBox(font, x+49, y + 26, 131, 10, Components.immutableEmpty());
         nameField.setTextColor(-1);
@@ -70,11 +95,22 @@ public class ComputerScreen extends AbstractSimiScreen {
         save.setToolTip(Component.literal("Save Script"));
         addRenderableWidget(save);
 
-        terminal = new MultiLineEditBox(font, x, y, 426, 200, Components.immutableEmpty(), Components.immutableEmpty());
+        terminal = new MultiLineEditBox(font, x, y, width, 150, Components.immutableEmpty(), Components.immutableEmpty());
         terminal.setValue(computer.getScript());
         setInitialFocus(terminal);
 
         addRenderableWidget(terminal);
+
+        output = new MultiLineTextBox(font, x, y + 153, width, 57, Components.immutableEmpty(), Components.immutableEmpty());
+        output.setValue(computer.getTerminal());
+        addRenderableWidget(output);
+
+        clear = new IconButton(x - 20,  y + 153, AllIcons.I_TRASH);
+        clear.withCallback(() -> {
+            clearTerminal();
+        });
+        clear.setToolTip(Component.literal("Clear Terminal"));
+        addRenderableWidget(clear);
 
 
 
@@ -146,15 +182,21 @@ public class ComputerScreen extends AbstractSimiScreen {
     }
 
     private void confirm(){
-        AllPackets.channel.sendToServer(new ConfigureComputerScriptPacket(blockPos, terminal.getValue()));
+        save();
         onClose();
     }
 
     private void save(){
         AllPackets.channel.sendToServer(new ConfigureComputerScriptPacket(blockPos, terminal.getValue()));
+
+
     }
 
     private void run(){
         AllPackets.channel.sendToServer(new ComputerSendRunPacket(blockPos));
+    }
+
+    private void clearTerminal(){
+        AllPackets.channel.sendToServer(new ComputerSendTerminalPacket(blockPos, ""));
     }
 }

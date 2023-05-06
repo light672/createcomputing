@@ -5,37 +5,33 @@ import com.simibubi.create.foundation.networking.TileEntityConfigurationPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
-public class ConfigureComputerScriptPacket extends TileEntityConfigurationPacket<ComputerBlockEntity> {
-    private String script;
-    public ConfigureComputerScriptPacket(FriendlyByteBuf buffer) {
+public class ComputerSendTerminalPacket extends TileEntityConfigurationPacket<ComputerBlockEntity> {
+    private String terminal;
+    public ComputerSendTerminalPacket(FriendlyByteBuf buffer) {
         super(buffer);
     }
 
-    public ConfigureComputerScriptPacket(BlockPos pos, String script){
+    public ComputerSendTerminalPacket(BlockPos pos, String terminal){
         super(pos);
-        this.script = script;
+        this.terminal = terminal;
     }
 
     @Override
     protected void writeSettings(FriendlyByteBuf buffer) {
         CompoundTag tag = new CompoundTag();
-        tag.putString("Script", this.script);
+        tag.putString("Terminal", this.terminal);
         buffer.writeNbt(tag);
     }
 
     @Override
     protected void readSettings(FriendlyByteBuf buffer) {
-        this.script = buffer.readNbt().getString("Script");
+        this.terminal = buffer.readNbt().getString("Terminal");
     }
 
     @Override
     protected void applySettings(ComputerBlockEntity computerBlock) {
-        computerBlock.setScript(this.script);
+        computerBlock.setTerminal(this.terminal);
         computerBlock.sendData();
     }
-
 }

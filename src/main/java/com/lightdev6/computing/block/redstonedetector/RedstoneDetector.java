@@ -122,7 +122,7 @@ public class RedstoneDetector extends Block implements EntityBlock, ITE<Redstone
         return power;
     }
 
-    private void getRedstoneSignalUpdate(int power, Level level, BlockPos blockPos){
+    private void getRedstoneSignalUpdate(int power, ServerLevel level, BlockPos blockPos){
         /*if (level.getBlockEntity(blockPos) instanceof RedstoneDetectorBlockEntity redstoneDetector)
             if (level.getBlockEntity(new BlockPos(blockPos.getX(), blockPos.getY() - 1, blockPos.getZ())) instanceof ComputerBlockEntity computer)
                 Computing.runFunctionProgram(
@@ -136,7 +136,7 @@ public class RedstoneDetector extends Block implements EntityBlock, ITE<Redstone
         if (level.getBlockEntity(new BlockPos(blockPos.getX(), blockPos.getY() - 1, blockPos.getZ())) instanceof ComputerBlockEntity computer){
             Player player = level.getNearestPlayer(blockPos.getX(), blockPos.getY(), blockPos.getZ(), -1.0, false);
             RedstoneDetectorBlockEntity redstoneDetector = (RedstoneDetectorBlockEntity)level.getBlockEntity(blockPos);
-            Computing.runFunctionProgram(redstoneDetector.getSignalName(), Arrays.asList((double)power),computer.getScript(), Vec3.atCenterOf(blockPos), player);
+            Computing.runFunctionProgram(redstoneDetector.getSignalName(), Arrays.asList((double)power),computer.getScript(), computer);
         }
     }
 }

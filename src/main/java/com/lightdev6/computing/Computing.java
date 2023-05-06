@@ -1,10 +1,15 @@
 package com.lightdev6.computing;
 
+import com.lightdev6.computing.block.computer.Computer;
+import com.lightdev6.computing.block.computer.ComputerBlockEntity;
 import com.lightdev6.cscript.CScript;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -55,15 +60,15 @@ public class Computing {
         }
     }
 
-    public static void runProgram(String source, Vec3 position, Player player) {
+    public static void runProgram(String source, ComputerBlockEntity computer) {
         Thread thread = new Thread(() -> {
-            new CScript(source, player);
+            new CScript(source, computer);
         });
         thread.start();
     }
-    public static void runFunctionProgram(String function, List<Object> arguments, String source, Vec3 position, Player player){
+    public static void runFunctionProgram(String function, List<Object> arguments, String source, ComputerBlockEntity computer){
         Thread thread = new Thread(() -> {
-           new CScript(source, player, function, arguments);
+           new CScript(source, computer, function, arguments);
         });
         thread.start();
     }

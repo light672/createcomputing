@@ -41,33 +41,11 @@ public class Computer extends Block implements EntityBlock, ICogWheel, ITE<Compu
 
     @Override
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult result) {
-        //called on right click
-        if(!level.isClientSide && hand.equals(InteractionHand.MAIN_HAND)){
-            ItemStack item = player.getMainHandItem();
-            String itemName = item.getHoverName().getString();
-
-            //Computing.runProgram(itemName, Vec3.atCenterOf(blockPos), player);
-            if (level.getBlockEntity(blockPos) instanceof ComputerBlockEntity computer){
-                if(item.getItem().equals(Items.STICK)){
-                    Computing.runProgram(computer.getScript(), Vec3.atCenterOf(blockPos), player);
-                } else if(item.getItem().equals(Items.QUARTZ)){
-                    Computing.runFunctionProgram("f", Arrays.asList(13.0),computer.getScript(), Vec3.atCenterOf(blockPos), player);
-                } else if (item.getItem().equals(Items.PAPER)){
-                    computer.setScript(itemName);
-                    player.sendSystemMessage(Component.literal("Set script"));
-                }
-            }
-
-
-        }
-
         ItemStack held = player.getMainHandItem();
         if (AllItems.WRENCH.isIn(held))
             return InteractionResult.PASS;
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
                 () -> () -> withTileEntityDo(level, blockPos, te -> this.displayScreen(te, player)));
-
-
         return InteractionResult.SUCCESS;
     }
 
