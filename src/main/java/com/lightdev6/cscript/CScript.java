@@ -53,7 +53,7 @@ public class CScript {
         List<Stmt> statements = parser.parse();
 
         if (hadError) return;
-        final FunctionCallInterpreter interpreter = new FunctionCallInterpreter(this, "f");
+        final FunctionCallInterpreter interpreter = new FunctionCallInterpreter(this);
         Resolver resolver = new Resolver(interpreter, this);
         resolver.resolve(statements);
         if (hadError) return;

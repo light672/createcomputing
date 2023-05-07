@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionCallInterpreter extends Interpreter{
-    private String functionName;
-    FunctionCallInterpreter(CScript main, String functionName) {
+    FunctionCallInterpreter(CScript main) {
         super(main);
     }
 
     void callFunction(List<Stmt> statements, String functionName, List<Object> arguments){
         interpret(statements);
-        //Expr.Call expr = new Expr.Call(new Expr.Variable(new Token(TokenType.IDENTIFIER, functionName, null, 0)),);
         Object callee = super.evaluate(new Expr.Variable(new Token(TokenType.IDENTIFIER, functionName, null, 0)));
 
         CScriptCallable function = (CScriptCallable)callee;
