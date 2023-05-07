@@ -82,7 +82,6 @@ public class CScript {
     }
 
     public void log(String message){
-        System.out.println(message);
         computer.setTerminal(computer.getTerminal() + message + "\n");
     }
 
