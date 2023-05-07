@@ -54,16 +54,6 @@ public class RedstoneDetector extends Block implements EntityBlock, ITE<Redstone
         return AllTileEntities.REDSTONE_DETECTOR.get().create(blockPos, blockState);
     }
 
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
-        return level.isClientSide() ? null : ($0, blockPos, $1, blockEntity) -> {
-            if (blockEntity instanceof RedstoneDetectorBlockEntity redstoneDetector){
-                redstoneDetector.tick();
-                int powerLevel = level.getSignal(blockPos, Direction.EAST);
-            }
-        };
-    }
 
     @Override
     public void neighborChanged(BlockState pState, Level level, BlockPos blockPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
@@ -84,19 +74,6 @@ public class RedstoneDetector extends Block implements EntityBlock, ITE<Redstone
 
     @Override
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand hand, BlockHitResult result) {
-        /*if (level.isClientSide) return super.use(blockState, level, blockPos, player, hand, result);
-
-        if (!hand.equals(InteractionHand.MAIN_HAND)) return super.use(blockState, level, blockPos, player, hand, result);
-
-        ItemStack item = player.getMainHandItem();
-        String itemName = item.getHoverName().getString();
-
-        if (item.getItem().equals(Items.PAPER))
-            if (level.getBlockEntity(blockPos) instanceof RedstoneDetectorBlockEntity redstoneDetector){
-                redstoneDetector.setSignalName(itemName);
-                player.sendSystemMessage(Component.literal("Set signal to: " + itemName));
-            }
-        */
         ItemStack held = player.getMainHandItem();
         if (AllItems.WRENCH.isIn(held))
             return InteractionResult.PASS;
