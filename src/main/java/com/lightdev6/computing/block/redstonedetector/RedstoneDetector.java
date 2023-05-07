@@ -15,6 +15,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -23,6 +24,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -33,9 +36,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 
 public class RedstoneDetector extends Block implements EntityBlock, ITE<RedstoneDetectorBlockEntity> {
-
+    public static final BooleanProperty LIT = BooleanProperty.create("lit");
     public RedstoneDetector(Properties properties) {
         super(properties);
+        this.registerDefaultState(this.defaultBlockState().setValue(LIT, Boolean.valueOf(false)));
     }
 
     @Override
@@ -58,8 +62,10 @@ public class RedstoneDetector extends Block implements EntityBlock, ITE<Redstone
     @Override
     public void neighborChanged(BlockState pState, Level level, BlockPos blockPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
         super.neighborChanged(pState, level, blockPos, pBlock, pFromPos, pIsMoving);
-        if (level.isClientSide()){
-            return;
+        if (level.isClientSide()) return;
+        boolean flag = pState.getValue(LIT);
+        if (flag != level.hasNeighborSignal(blockPos)){
+            level.setBlock(blockPos, pState.cycle(LIT), 3);
         }
         if (!level.getBlockTicks().willTickThisTick(blockPos, this)) level.scheduleTick(blockPos, this, 0);
     }
@@ -88,6 +94,11 @@ public class RedstoneDetector extends Block implements EntityBlock, ITE<Redstone
     protected void displayScreen(RedstoneDetectorBlockEntity redstoneDetector, Player player){
         if (player instanceof LocalPlayer)
             ScreenOpener.open(new RedstoneDetectorScreen(redstoneDetector));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
+        pBuilder.add(LIT);
     }
 
     private int getPower(Level world, BlockPos pos){

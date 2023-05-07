@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": {"model": "computing:block/redstone_detector"},
+    "lit=true": {"model": "computing:block/redstone_detector_on"}
+  }
+}
