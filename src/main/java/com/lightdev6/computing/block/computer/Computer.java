@@ -51,8 +51,8 @@ public class Computer extends Block implements EntityBlock, ICogWheel, ITE<Compu
 
     @OnlyIn(value = Dist.CLIENT)
     protected void displayScreen(ComputerBlockEntity computer, Player player){
-        if (player instanceof LocalPlayer)
-            ScreenOpener.open(new ComputerScreen(computer));
+        //if (player instanceof LocalPlayer)
+        //    ScreenOpener.open(new ComputerScreen(computer));
     }
 
 

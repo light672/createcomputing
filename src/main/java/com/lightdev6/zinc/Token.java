@@ -1,4 +1,4 @@
-package com.lightdev6.cscript;
+package com.lightdev6.zinc;
 
 public class Token {
     final TokenType type;

@@ -1,10 +1,9 @@
-package com.lightdev6.cscript;
+package com.lightdev6.zinc;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionCallInterpreter extends Interpreter{
-    FunctionCallInterpreter(CScript main) {
+    FunctionCallInterpreter(Zinc main) {
         super(main);
     }
 
@@ -12,7 +11,7 @@ public class FunctionCallInterpreter extends Interpreter{
         interpret(statements);
         Object callee = super.evaluate(new Expr.Variable(new Token(TokenType.IDENTIFIER, functionName, null, 0)));
 
-        CScriptCallable function = (CScriptCallable)callee;
+        ZincCallable function = (ZincCallable)callee;
         if (arguments.size() != function.arity()){
             throw new RuntimeError(null, "Signal " + functionName + "needed " + function.arity() + " arguments but got " + arguments.size() + ".");
         }
