@@ -1,30 +1,19 @@
-# Create: Computers
-Computer mod for Create
+#Zinc
 
+##About
 
-## CScript
+  Zinc is an interpreted language made in Java using the Crafting Interpreters book. Many changes were made from the original lox version, such as the implementation of faster for loops, being able to run a script with arguments, and better variable assignment operators along with the caret for exponentation.
 
-CScript is a custom interpreted language writen in Java that controls everything related to the computers in Create: Computers.
+##Syntax
 
-### Speed
+###Defining a variable
+  Variables are defined using the `var` keyword. Zinc is dynamically typed, so any type can be put in a variable, even if it is different to the one it has already been assigned. 
+Defining a variable looks like this:
 
-Because it is interpreted, and in Java, it may run a lot slower for programs that require things like recursion.
-
-For example, on my computer:
-
-```python
-function fib(n) {
-  if (n < 2) return n;
-  return fib(n - 1) + fib(n - 2); 
-}
-
-var before = clock();
-print fib(40);
-var after = clock();
-print after - before;
+```javascript
+var x = 13;
+var y = "String";
+var z = clock();
 ```
-This takes about a minute to run.
 
-Good for you, this is a Minecraft mod, and you won't be needing the Fibonacci sequence to run farms in your base.
 
-...
