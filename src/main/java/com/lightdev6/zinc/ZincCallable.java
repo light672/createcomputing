@@ -1,8 +1,8 @@
-package com.lightdev6.cscript;
+package com.lightdev6.zinc;
 
 import java.util.List;
 
-interface CScriptCallable {
+interface ZincCallable {
     int arity();
     Object call(Interpreter interpreter, List<Object> arguments);
 
