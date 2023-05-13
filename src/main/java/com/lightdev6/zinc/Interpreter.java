@@ -12,50 +12,20 @@ class RuntimeError extends RuntimeException {
 }
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
-    final Environment globals = new Environment();
-    private Environment environment = globals;
+    final Environment globals;
+    private Environment environment;
     private final Map<Expr, Integer> locals = new HashMap<>();
     private final Zinc main;
-    Interpreter(Zinc main){
+
+    public Environment getGlobals(){
+        return globals;
+    }
+
+    Interpreter(Zinc main, Environment globals){
         this.main = main;
-        globals.define("clock", new ZincCallable() {
-            @Override
-            public int arity() {return 0;}
+        this.globals = globals;
+        environment = this.globals;
 
-            @Override public Object call(Interpreter interpreter, List<Object> arguments){
-                return (double)System.currentTimeMillis() / 1000.0;
-            }
-
-            @Override
-            public String toString(){ return "<native fn> ";}
-        });
-        globals.define("wait", new ZincCallable() {
-            @Override
-            public int arity() {return 1;}
-
-            @Override public Object call(Interpreter interpreter, List<Object> arguments){
-                try {
-                    Thread.sleep(Math.round((double)arguments.get(0) * 1000));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            public String toString(){ return "<native fn> ";}
-        });
-        globals.define("string", new ZincCallable() {
-            @Override
-            public int arity() {
-                return 1;
-            }
-
-            @Override
-            public Object call(Interpreter interpreter, List<Object> arguments) {
-                return arguments.get(0).toString();
-            }
-        });
     }
 
     @Override

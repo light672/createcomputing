@@ -3,8 +3,8 @@ package com.lightdev6.zinc;
 import java.util.List;
 
 public class FunctionCallInterpreter extends Interpreter{
-    FunctionCallInterpreter(Zinc main) {
-        super(main);
+    FunctionCallInterpreter(Zinc main, Environment globals) {
+        super(main, globals);
     }
 
     void callFunction(List<Stmt> statements, String functionName, List<Object> arguments){
@@ -20,12 +20,7 @@ public class FunctionCallInterpreter extends Interpreter{
 
     @Override
     void interpret(List<Stmt> statements) {
-        for (Stmt statement : statements){
-            if (statement instanceof Stmt.While || statement instanceof Stmt.Print || statement instanceof Stmt.Return || statement instanceof Stmt.If
-                    || statement instanceof Stmt.Expression || statement instanceof Stmt.Block){
-                statements.remove(statement);
-            }
-        }
+        statements.removeIf(statement -> !(statement instanceof Stmt.Function));
         super.interpret(statements);
     }
 }

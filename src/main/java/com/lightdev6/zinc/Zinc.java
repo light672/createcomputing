@@ -27,11 +27,12 @@ public class Zinc {
         List<Stmt> statements = parser.parse();
 
         if (hadError) return;
-        final Interpreter interpreter = new Interpreter(this);
+        final Interpreter interpreter = new Interpreter(this, Environment.defaultGlobals());
         Resolver resolver = new Resolver(interpreter, this);
         resolver.resolve(statements);
         if (hadError) return;
         interpreter.interpret(statements);
+        computer.setGlobals(interpreter.getGlobals());
     }
     private void runFunction (String source, String functionName, List<Object> arguments){
         Scanner scanner = new Scanner(source, this);
@@ -40,11 +41,12 @@ public class Zinc {
         List<Stmt> statements = parser.parse();
 
         if (hadError) return;
-        final FunctionCallInterpreter interpreter = new FunctionCallInterpreter(this);
+        final FunctionCallInterpreter interpreter = new FunctionCallInterpreter(this, computer.getGlobals());
         Resolver resolver = new Resolver(interpreter, this);
         resolver.resolve(statements);
         if (hadError) return;
         interpreter.callFunction(statements, functionName,arguments);
+        computer.setGlobals(interpreter.getGlobals());
     }
 
     void error(int line, String message){
