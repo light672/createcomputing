@@ -3,7 +3,6 @@ package com.lightdev6.computing;
 import com.lightdev6.computing.block.computer.Computer;
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetector;
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorItem;
-import com.lightdev6.computing.block.typewriter.Typewriter;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.builders.ItemBuilder;
@@ -36,15 +35,9 @@ public class AllBlocks {
             .block("redstone_detector", RedstoneDetector::new)
             .initialProperties(() -> Blocks.STONE)
             .transform(pickaxe())
+            .properties(BlockBehaviour.Properties::noOcclusion)
             .item(RedstoneDetectorItem::new)
             .transform(customItemModel())
-            .register();
-    public static final BlockEntry<Typewriter> TYPEWRITER = REGISTRATE
-            .block("typewriter", Typewriter::new)
-            .initialProperties(() -> Blocks.LECTERN)
-            .properties(BlockBehaviour.Properties::noOcclusion)
-            .transform(pickaxe())
-            .simpleItem()
             .register();
 
     public static <T extends Block, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> pickaxe() {

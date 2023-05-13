@@ -1,16 +1,17 @@
-package com.lightdev6.zinc;
+package com.lightdev6.cscript;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static com.lightdev6.zinc.TokenType.*;
+import static com.lightdev6.cscript.TokenType.*;
 
 class Parser {
     private static class ParseError extends RuntimeException{};
     private final List<Token> tokens;
-    private final Zinc main;
+    private final CScript main;
     private int current = 0;
-    Parser(List<Token> tokens, Zinc main){
+    Parser(List<Token> tokens, CScript main){
         this.main = main;
         this.tokens = tokens;
     }

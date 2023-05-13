@@ -1,13 +1,13 @@
-package com.lightdev6.zinc;
+package com.lightdev6.cscript;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ZincInstance {
-    private ZincClass clas;
+public class CScriptInstance {
+    private CScriptClass clas;
     private final Map<String, Object> fields = new HashMap<>();
 
-    ZincInstance(ZincClass clas){
+    CScriptInstance(CScriptClass clas){
         this.clas = clas;
     }
 
@@ -21,7 +21,7 @@ public class ZincInstance {
             return fields.get(name.lexeme);
         }
 
-        ZincFunction method = clas.findMethod(name.lexeme);
+        CScriptFunction method = clas.findMethod(name.lexeme);
         if (method != null) return method.bind(this);
 
         throw new RuntimeError(name, "Undefined property " + name.lexeme + "'.");

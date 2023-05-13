@@ -1,66 +1,124 @@
-package com.lightdev6.computing.block.typewriter;
+package com.lightdev6.computing.block.computer;
+
+
+
 
 import com.lightdev6.computing.AllPackets;
-import com.lightdev6.computing.block.computer.ComputerBlockEntity;
+import com.lightdev6.computing.Computing;
 import com.lightdev6.computing.gui.MultiLineTextBox;
 import com.lightdev6.computing.packets.ComputerRequestTerminalUpdatePacket;
 import com.lightdev6.computing.packets.ComputerSendRunPacket;
 import com.lightdev6.computing.packets.ComputerSendTerminalPacket;
-import com.lightdev6.computing.packets.ConfigurePlateScriptPacket;
+import com.lightdev6.computing.packets.ConfigureComputerScriptPacket;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.gui.AbstractSimiScreen;
+import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
+import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.utility.Components;
+import com.simibubi.create.foundation.utility.Lang;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineEditBox;
+import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.phys.Vec3;
 import org.lwjgl.glfw.GLFW;
 
-public class TypewriterScreen extends AbstractSimiScreen {
+public class ComputerScreen extends AbstractSimiScreen {
     private MultiLineEditBox terminal;
+    private MultiLineTextBox output;
     private BlockPos blockPos;
     private IconButton save;
+    private IconButton run;
+    private IconButton clear;
 
 
-    private TypewriterBlockEntity typewriter;
+    private ComputerBlockEntity computer;
 
+    private int timer;
 
-    public TypewriterScreen(TypewriterBlockEntity typewriter){
+    public ComputerScreen(ComputerBlockEntity computer){
         super(Component.literal("Edit Signal Name"));
-        this.typewriter = typewriter;
-        this.blockPos = this.typewriter.getBlockPos();
+        this.computer = computer;
+        this.blockPos = computer.getBlockPos();
+    }
+
+
+    @Override
+    public void tick() {
+        super.tick();
+        computer.getUpdateTag();
+        output.setValue(computer.getTerminal());
+        if (timer >= 4){
+            timer = 0;
+            AllPackets.channel.sendToServer(new ComputerRequestTerminalUpdatePacket(blockPos));
+        } else {
+            timer++;
+        }
     }
 
     @Override
     protected void init() {
         int width = 380;
-        int height = 150;
+        int height = 210;
         setWindowSize(width, height);
         super.init();
+
         int x = guiLeft;
         int y = guiTop;
-        save = new IconButton(x - 20,  y, AllIcons.I_CONFIG_SAVE);
+
+
+
+        run = new IconButton(x - 20, y, AllIcons.I_PLAY);
+        run.withCallback(() -> {
+            run();
+        });
+        run.setToolTip(Component.literal("Run Script"));
+        addRenderableWidget(run);
+
+        save = new IconButton(x - 20,  y + 20, AllIcons.I_CONFIG_SAVE);
         save.withCallback(() -> {
             save();
         });
-        save.setToolTip(Component.literal("Save Script To Plate"));
+        save.setToolTip(Component.literal("Save Script"));
         addRenderableWidget(save);
+
         terminal = new MultiLineEditBox(font, x, y, width, 150, Components.immutableEmpty(), Components.immutableEmpty());
-        terminal.setValue(typewriter.getPlate().getTag().getString("Script"));
+        terminal.setValue(computer.getScript());
         setInitialFocus(terminal);
+
         addRenderableWidget(terminal);
+
+        output = new MultiLineTextBox(font, x, y + 153, width, 57, Components.immutableEmpty(), Components.immutableEmpty());
+        output.setValue(computer.getTerminal());
+        addRenderableWidget(output);
+
+        clear = new IconButton(x - 20,  y + 153, AllIcons.I_TRASH);
+        clear.withCallback(() -> {
+            clearTerminal();
+        });
+        clear.setToolTip(Component.literal("Clear Terminal"));
+        addRenderableWidget(clear);
+
+
+
+
     }
 
     @Override
-    protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {}
+    protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+        int x = guiLeft;
+        int y = guiTop;
+
+
+    }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == 256 && this.shouldCloseOnEsc()) {
-            leave();
+            confirm();
             return true;
         }
 
@@ -75,7 +133,7 @@ public class TypewriterScreen extends AbstractSimiScreen {
                     terminal.textField.insertText("\n    \n}");
                     terminal.textField.cursor -= 2;
                     terminal.textField.selectCursor = terminal.textField.cursor;
-                    return true;
+
                 }
 
             }
@@ -105,12 +163,16 @@ public class TypewriterScreen extends AbstractSimiScreen {
     }
 
     private void save(){
-        getMinecraft().player.playSound(SoundEvents.ENCHANTMENT_TABLE_USE, 1.0F, 1.0F);
-        AllPackets.channel.sendToServer(new ConfigurePlateScriptPacket(blockPos, terminal.getValue()));
+        AllPackets.channel.sendToServer(new ConfigureComputerScriptPacket(blockPos, terminal.getValue()));
+
+
     }
 
-    private void leave(){
-        //TODO: Run a check and display a GUI element if the player has unsaved changes.
-        confirm();
+    private void run(){
+        AllPackets.channel.sendToServer(new ComputerSendRunPacket(blockPos));
+    }
+
+    private void clearTerminal(){
+        AllPackets.channel.sendToServer(new ComputerSendTerminalPacket(blockPos, ""));
     }
 }

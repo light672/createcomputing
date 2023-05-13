@@ -1,12 +1,12 @@
-package com.lightdev6.zinc;
+package com.lightdev6.cscript;
 
 import java.util.Arrays;
 
-public class ZincFor {
+public class CScriptFor {
     private final Stmt.For declaration;
     private final Environment closure;
 
-    ZincFor(Stmt.For declaration, Environment closure){
+    CScriptFor(Stmt.For declaration, Environment closure){
         this.declaration = declaration;
         this.closure = closure;
 

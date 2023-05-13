@@ -1,4 +1,6 @@
-package com.lightdev6.zinc;
+package com.lightdev6.cscript;
+
+import ca.weblite.objc.Runtime;
 
 import java.util.*;
 
@@ -15,10 +17,10 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     final Environment globals = new Environment();
     private Environment environment = globals;
     private final Map<Expr, Integer> locals = new HashMap<>();
-    private final Zinc main;
-    Interpreter(Zinc main){
+    private final CScript main;
+    Interpreter(CScript main){
         this.main = main;
-        globals.define("clock", new ZincCallable() {
+        globals.define("clock", new CScriptCallable() {
             @Override
             public int arity() {return 0;}
 
@@ -29,7 +31,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
             @Override
             public String toString(){ return "<native fn> ";}
         });
-        globals.define("wait", new ZincCallable() {
+        globals.define("wait", new CScriptCallable() {
             @Override
             public int arity() {return 1;}
 
@@ -45,7 +47,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
             @Override
             public String toString(){ return "<native fn> ";}
         });
-        globals.define("string", new ZincCallable() {
+        globals.define("string", new CScriptCallable() {
             @Override
             public int arity() {
                 return 1;
@@ -68,17 +70,17 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     @Override
     public Object visitSetExpr(Expr.Set expr){
         Object object = evaluate(expr.object);
-        if (!(object instanceof ZincInstance)){
+        if (!(object instanceof CScriptInstance)){
             throw new RuntimeError(expr.name, "Only instances have fields");
         }
         Object value = evaluate(expr.value);
-        ((ZincInstance)object).set(expr.name, value);
+        ((CScriptInstance)object).set(expr.name, value);
         return value;
     }
 
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt){
-        ZincFunction function = new ZincFunction(stmt, environment, false);
+        CScriptFunction function = new CScriptFunction(stmt, environment, false);
         environment.define(stmt.name.lexeme, function);
         return null;
     }
@@ -113,11 +115,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         for (Expr argument : expr.arguments){
             arguments.add(evaluate(argument));
         }
-        if (!(callee instanceof ZincCallable)){
+        if (!(callee instanceof CScriptCallable)){
             throw new RuntimeError(expr.paren, "Can only call functions and classes.");
         }
 
-        ZincCallable function = (ZincCallable)callee;
+        CScriptCallable function = (CScriptCallable)callee;
         if (arguments.size() != function.arity()){
             throw new RuntimeError(expr.paren, "Expected " + function.arity() + " arguments but got " + arguments.size() + ".");
         }
@@ -272,7 +274,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
                 executeBlock(block.statements, environment);
             }
         }*/
-        ZincFor forr = new ZincFor(stmt, environment);
+        CScriptFor forr = new CScriptFor(stmt, environment);
         forr.run(this);
         return null;
     }
@@ -282,7 +284,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         Object superclass = null;
         if (stmt.superclass != null){
             superclass = evaluate(stmt.superclass);
-            if (!(superclass instanceof ZincClass)){
+            if (!(superclass instanceof CScriptClass)){
                 throw new RuntimeError(stmt.superclass.name, "Superclass must be a class.");
             }
         }
@@ -292,14 +294,14 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
             environment.define("super", superclass);
         }
 
-        Map<String, ZincFunction> methods = new HashMap<>();
+        Map<String, CScriptFunction> methods = new HashMap<>();
         for (Stmt.Function method : stmt.methods){
-            ZincFunction function = new ZincFunction(method,environment, method.name.lexeme.equals("init"));
+            CScriptFunction function = new CScriptFunction(method,environment, method.name.lexeme.equals("init"));
             methods.put(method.name.lexeme, function);
         }
 
 
-        ZincClass clas = new ZincClass(stmt.name.lexeme, (ZincClass)superclass, methods);
+        CScriptClass clas = new CScriptClass(stmt.name.lexeme, (CScriptClass)superclass, methods);
         if(superclass != null){
             environment = environment.enclosing;
         }
@@ -315,9 +317,9 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     @Override
     public Object visitSuperExpr(Expr.Super expr){
         int distance = locals.get(expr);
-        ZincClass superclass = (ZincClass)environment.getAt(distance, "super");
-        ZincInstance object = (ZincInstance) environment.getAt(distance - 1, "this");
-        ZincFunction method = superclass.findMethod(expr.method.lexeme);
+        CScriptClass superclass = (CScriptClass)environment.getAt(distance, "super");
+        CScriptInstance object = (CScriptInstance) environment.getAt(distance - 1, "this");
+        CScriptFunction method = superclass.findMethod(expr.method.lexeme);
         if (method == null){
             throw new RuntimeError(expr.method, "Undefined property '" + expr.method.lexeme + "'.");
         }
@@ -327,8 +329,8 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     @Override
     public Object visitGetExpr(Expr.Get expr){
         Object object = evaluate(expr.object);
-        if (object instanceof ZincInstance){
-            return ((ZincInstance) object).get(expr.name);
+        if (object instanceof CScriptInstance){
+            return ((CScriptInstance) object).get(expr.name);
         }
         throw new RuntimeError(expr.name, "Only instances have properties.");
     }

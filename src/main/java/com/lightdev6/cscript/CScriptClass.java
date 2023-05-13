@@ -1,13 +1,13 @@
-package com.lightdev6.zinc;
+package com.lightdev6.cscript;
 
 import java.util.List;
 import java.util.Map;
 
-class ZincClass implements ZincCallable {
+class CScriptClass implements CScriptCallable{
     final String name;
-    private final Map<String, ZincFunction> methods;
-    final ZincClass superclass;
-    ZincClass(String name, ZincClass superclass, Map<String, ZincFunction> methods){
+    private final Map<String, CScriptFunction> methods;
+    final CScriptClass superclass;
+    CScriptClass(String name, CScriptClass superclass, Map<String, CScriptFunction> methods){
         this.name = name;
         this.methods = methods;
         this.superclass = superclass;
@@ -20,8 +20,8 @@ class ZincClass implements ZincCallable {
 
     @Override
     public Object call(Interpreter interpreter, List<Object> arguments){
-        ZincInstance instance = new ZincInstance(this);
-        ZincFunction initializer = findMethod("init");
+        CScriptInstance instance = new CScriptInstance(this);
+        CScriptFunction initializer = findMethod("init");
         if (initializer != null){
             initializer.bind(instance).call(interpreter, arguments);
         }
@@ -30,12 +30,12 @@ class ZincClass implements ZincCallable {
 
     @Override
     public int arity(){
-        ZincFunction initializer = findMethod("init");
+        CScriptFunction initializer = findMethod("init");
         if (initializer == null) return 0;
         return initializer.arity();
     }
 
-    ZincFunction findMethod(String name){
+    CScriptFunction findMethod(String name){
         if (methods.containsKey(name)){
             return methods.get(name);
         }

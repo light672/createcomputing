@@ -1,14 +1,14 @@
-package com.lightdev6.zinc;
+package com.lightdev6.cscript;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static com.lightdev6.zinc.TokenType.*;
+import static com.lightdev6.cscript.TokenType.*;
 
 public class Scanner {
     private final String source;
-    private final Zinc main;
+    private final CScript main;
     private final List<Token> tokens = new ArrayList<>();
 
     private int start = 0;
@@ -42,7 +42,7 @@ public class Scanner {
 
     }
 
-    Scanner(String source, Zinc main){
+    Scanner(String source, CScript main){
         this.main = main;
         this.source = source;
     }

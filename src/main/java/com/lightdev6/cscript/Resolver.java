@@ -1,4 +1,6 @@
-package com.lightdev6.zinc;
+package com.lightdev6.cscript;
+
+import com.mojang.datafixers.FunctionType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,13 +24,13 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
 
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
-    private final Zinc main;
+    private final CScript main;
     private FunctionType currentFunction = FunctionType.NONE;
     private ClassType currentClass = ClassType.NONE;
 
 
 
-    Resolver(Interpreter interpreter, Zinc main){
+    Resolver(Interpreter interpreter, CScript main){
         this.main = main;
         this.interpreter = interpreter;
     }

@@ -1,12 +1,12 @@
-package com.lightdev6.zinc;
+package com.lightdev6.cscript;
 
 import java.util.List;
 
-public class ZincFunction implements ZincCallable {
+public class CScriptFunction implements CScriptCallable{
     private final Stmt.Function declaration;
     private final Environment closure;
     private final boolean isInitializer;
-    ZincFunction(Stmt.Function declaration, Environment closure, boolean isInitializer){
+    CScriptFunction(Stmt.Function declaration, Environment closure, boolean isInitializer){
         this.declaration = declaration;
         this.closure = closure;
         this.isInitializer = isInitializer;
@@ -39,9 +39,9 @@ public class ZincFunction implements ZincCallable {
         return "<fn " + declaration.name.lexeme + ">";
     }
 
-    ZincFunction bind(ZincInstance instance){
+    CScriptFunction bind(CScriptInstance instance){
         Environment environment = new Environment(closure);
         environment.define("this", instance);
-        return new ZincFunction(declaration, environment, isInitializer);
+        return new CScriptFunction(declaration, environment, isInitializer);
     }
 }

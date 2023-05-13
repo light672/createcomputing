@@ -1,4 +1,4 @@
-package com.lightdev6.zinc;
+package com.lightdev6.cscript;
 
 import java.util.List;
 

@@ -1,10 +1,16 @@
 package com.lightdev6.computing;
 
+import com.lightdev6.computing.block.computer.Computer;
 import com.lightdev6.computing.block.computer.ComputerBlockEntity;
-import com.lightdev6.zinc.Zinc;
+import com.lightdev6.cscript.CScript;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.foundation.data.CreateRegistrate;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -28,7 +34,6 @@ public class Computing {
     public Computing() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         REGISTRATE.registerEventListeners(modEventBus);
-        AllItems.register();
         AllBlocks.register();
         AllTileEntities.register();
         modEventBus.addListener(this::commonSetup);
@@ -57,13 +62,13 @@ public class Computing {
 
     public static void runProgram(String source, ComputerBlockEntity computer) {
         Thread thread = new Thread(() -> {
-            new Zinc(source, computer);
+            new CScript(source, computer);
         });
         thread.start();
     }
     public static void runFunctionProgram(String function, List<Object> arguments, String source, ComputerBlockEntity computer){
         Thread thread = new Thread(() -> {
-           new Zinc(source, computer, function, arguments);
+           new CScript(source, computer, function, arguments);
         });
         thread.start();
     }

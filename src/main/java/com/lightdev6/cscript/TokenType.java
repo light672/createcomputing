@@ -1,5 +1,5 @@
 //Thank you CRAFTING INTERPRETERS for this code
-package com.lightdev6.zinc;
+package com.lightdev6.cscript;
 
 
 public enum TokenType {

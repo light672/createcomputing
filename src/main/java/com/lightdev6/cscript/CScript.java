@@ -1,21 +1,34 @@
-package com.lightdev6.zinc;
+package com.lightdev6.cscript;
 
 import com.lightdev6.computing.block.computer.ComputerBlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
-public class Zinc {
+public class CScript {
 
     boolean hadError = false;
     boolean hadRuntimeError = false;
     private ComputerBlockEntity computer;
 
-    public Zinc(String source, ComputerBlockEntity computer){
+    public CScript(String source, ComputerBlockEntity computer){
         this.computer = computer;
         run(source);
     }
 
-    public Zinc(String source, ComputerBlockEntity computer, String functionName, List<Object> arguments){
+    public CScript(String source, ComputerBlockEntity computer, String functionName, List<Object> arguments){
         this.computer = computer;
         runFunction(source, functionName, arguments);
     }
