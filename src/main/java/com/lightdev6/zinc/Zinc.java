@@ -9,44 +9,50 @@ public class Zinc {
     boolean hadError = false;
     boolean hadRuntimeError = false;
     private ComputerBlockEntity computer;
+    public Interpreter interpreter = null;
+    public FunctionCallInterpreter functionInterpreter = null;
 
-    public Zinc(String source, ComputerBlockEntity computer){
+    public Zinc(ComputerBlockEntity computer){
         this.computer = computer;
-        run(source);
+        interpreter = new Interpreter(this, Environment.defaultGlobals());
+        functionInterpreter = new FunctionCallInterpreter(this, computer.getGlobals());
     }
 
-    public Zinc(String source, ComputerBlockEntity computer, String functionName, List<Object> arguments){
-        this.computer = computer;
-        runFunction(source, functionName, arguments);
-    }
 
-    private void run (String source){
+
+
+
+
+
+    public void run (String source){
         Scanner scanner = new Scanner(source, this);
         List<Token> tokens = scanner.scanTokens();
         Parser parser = new Parser(tokens, this);
         List<Stmt> statements = parser.parse();
 
         if (hadError) return;
-        final Interpreter interpreter = new Interpreter(this, Environment.defaultGlobals());
+
         Resolver resolver = new Resolver(interpreter, this);
         resolver.resolve(statements);
         if (hadError) return;
         interpreter.interpret(statements);
         computer.setGlobals(interpreter.getGlobals());
     }
-    private void runFunction (String source, String functionName, List<Object> arguments){
-        Scanner scanner = new Scanner(source, this);
-        List<Token> tokens = scanner.scanTokens();
-        Parser parser = new Parser(tokens, this);
-        List<Stmt> statements = parser.parse();
+    public void runFunction (String source, String functionName, List<Object> arguments){
+        if (computer.getRunning()) {
+            Scanner scanner = new Scanner(source, this);
+            List<Token> tokens = scanner.scanTokens();
+            Parser parser = new Parser(tokens, this);
+            List<Stmt> statements = parser.parse();
 
-        if (hadError) return;
-        final FunctionCallInterpreter interpreter = new FunctionCallInterpreter(this, computer.getGlobals());
-        Resolver resolver = new Resolver(interpreter, this);
-        resolver.resolve(statements);
-        if (hadError) return;
-        interpreter.callFunction(statements, functionName,arguments);
-        computer.setGlobals(interpreter.getGlobals());
+            if (hadError) return;
+
+            Resolver resolver = new Resolver(functionInterpreter, this);
+            resolver.resolve(statements);
+            if (hadError) return;
+            functionInterpreter.callFunction(statements, functionName, arguments);
+            computer.setGlobals(functionInterpreter.getGlobals());
+        }
     }
 
     void error(int line, String message){
@@ -73,5 +79,6 @@ public class Zinc {
     public void log(String message){
         computer.setTerminal(computer.getTerminal() + message + "\n");
     }
+
 
 }

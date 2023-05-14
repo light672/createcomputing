@@ -5,13 +5,13 @@ import com.simibubi.create.foundation.networking.TileEntityConfigurationPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class ComputerRequestTerminalUpdatePacket extends TileEntityConfigurationPacket<ComputerBlockEntity> {
+public class ComputerRequestUpdatePacket extends TileEntityConfigurationPacket<ComputerBlockEntity> {
 
-    public ComputerRequestTerminalUpdatePacket(FriendlyByteBuf buffer) {
+    public ComputerRequestUpdatePacket(FriendlyByteBuf buffer) {
         super(buffer);
     }
 
-    public ComputerRequestTerminalUpdatePacket(BlockPos pos) {
+    public ComputerRequestUpdatePacket(BlockPos pos) {
         super(pos);
     }
 

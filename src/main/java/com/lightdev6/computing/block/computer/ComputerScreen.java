@@ -4,26 +4,16 @@ package com.lightdev6.computing.block.computer;
 
 
 import com.lightdev6.computing.AllPackets;
-import com.lightdev6.computing.Computing;
 import com.lightdev6.computing.gui.MultiLineTextBox;
-import com.lightdev6.computing.packets.ComputerRequestTerminalUpdatePacket;
-import com.lightdev6.computing.packets.ComputerSendRunPacket;
-import com.lightdev6.computing.packets.ComputerSendTerminalPacket;
-import com.lightdev6.computing.packets.ConfigureComputerScriptPacket;
+import com.lightdev6.computing.packets.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.gui.AbstractSimiScreen;
-import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.gui.AllIcons;
 import com.simibubi.create.foundation.gui.widget.IconButton;
-import com.simibubi.create.foundation.gui.widget.Label;
 import com.simibubi.create.foundation.utility.Components;
-import com.simibubi.create.foundation.utility.Lang;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineEditBox;
-import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.phys.Vec3;
 import org.lwjgl.glfw.GLFW;
 
 public class ComputerScreen extends AbstractSimiScreen {
@@ -53,9 +43,20 @@ public class ComputerScreen extends AbstractSimiScreen {
         output.setValue(computer.getTerminal());
         if (timer >= 4){
             timer = 0;
-            AllPackets.channel.sendToServer(new ComputerRequestTerminalUpdatePacket(blockPos));
+            AllPackets.channel.sendToServer(new ComputerRequestUpdatePacket(blockPos));
         } else {
             timer++;
+        }
+
+        if (computer.getRunning()){
+            run.setIcon(AllIcons.I_STOP);
+            run.setToolTip(Component.literal("Stop Program"));
+        } else if (computer.isSpeedRequirementFulfilled()){
+            run.setIcon(AllIcons.I_PLAY);
+            run.setToolTip(Component.literal("Run Program"));
+        } else {
+            run.setIcon(AllIcons.I_PAUSE);
+            run.setToolTip(Component.literal("Not enough speed"));
         }
     }
 
@@ -70,12 +71,19 @@ public class ComputerScreen extends AbstractSimiScreen {
         int y = guiTop;
 
 
-
-        run = new IconButton(x - 20, y, AllIcons.I_PLAY);
+        if (computer.getRunning()){
+            run = new IconButton(x - 20, y, AllIcons.I_STOP);
+        } else {
+            run = new IconButton(x - 20, y, AllIcons.I_PLAY);
+        }
         run.withCallback(() -> {
-            run();
+            if (computer.getRunning()){
+                stop();
+            } else {
+                run();
+            }
         });
-        run.setToolTip(Component.literal("Run Script"));
+        run.setToolTip(Component.literal("Run Program"));
         addRenderableWidget(run);
 
         save = new IconButton(x - 20,  y + 20, AllIcons.I_CONFIG_SAVE);
@@ -106,6 +114,7 @@ public class ComputerScreen extends AbstractSimiScreen {
 
 
     }
+
 
     @Override
     protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
@@ -170,6 +179,10 @@ public class ComputerScreen extends AbstractSimiScreen {
 
     private void run(){
         AllPackets.channel.sendToServer(new ComputerSendRunPacket(blockPos));
+    }
+
+    private void stop(){
+        AllPackets.channel.sendToServer(new ComputerSendStopPacket(blockPos));
     }
 
     private void clearTerminal(){

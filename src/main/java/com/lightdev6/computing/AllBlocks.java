@@ -3,6 +3,7 @@ package com.lightdev6.computing;
 import com.lightdev6.computing.block.computer.Computer;
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetector;
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorItem;
+import com.simibubi.create.foundation.block.BlockStressDefaults;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.builders.ItemBuilder;
@@ -27,6 +28,7 @@ public class AllBlocks {
             .block("computer", Computer::new)
             .initialProperties(() -> Blocks.STONE)
             .transform(pickaxe())
+            .transform(BlockStressDefaults.setImpact(12))
             .simpleItem()
             .properties(BlockBehaviour.Properties::noOcclusion)
             .register();

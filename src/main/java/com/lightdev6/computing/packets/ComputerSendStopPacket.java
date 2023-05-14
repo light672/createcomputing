@@ -7,17 +7,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ComputerSendRunPacket extends SimplePacketBase {
+public class ComputerSendStopPacket extends SimplePacketBase {
     BlockPos pos;
-    public ComputerSendRunPacket(BlockPos pos){
+    public ComputerSendStopPacket(BlockPos pos){
         this.pos = pos;
     }
-    public ComputerSendRunPacket(FriendlyByteBuf buffer){
+    public ComputerSendStopPacket(FriendlyByteBuf buffer){
         pos = buffer.readBlockPos();
     }
 
@@ -32,9 +31,8 @@ public class ComputerSendRunPacket extends SimplePacketBase {
         ctx.enqueueWork(() -> {
             ServerPlayer player = ctx.getSender();
             ServerLevel level = player.getLevel();
-            if (level.getBlockEntity(pos) instanceof ComputerBlockEntity computer && computer.isSpeedRequirementFulfilled()){
-                Computing.runProgram(computer.getScript(), computer);
-                computer.setRunning(true);
+            if (level.getBlockEntity(pos) instanceof ComputerBlockEntity computer){
+                computer.stop();
             }
         });
         ctx.setPacketHandled(true);

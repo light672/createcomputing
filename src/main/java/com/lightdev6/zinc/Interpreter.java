@@ -14,6 +14,7 @@ class RuntimeError extends RuntimeException {
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     final Environment globals;
     private Environment environment;
+    public boolean stopRequested = false;
     private final Map<Expr, Integer> locals = new HashMap<>();
     private final Zinc main;
 
@@ -211,6 +212,8 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     @Override
     public Void visitWhileStmt(Stmt.While stmt){
         while(isTruthy(evaluate(stmt.condition))){
+            if (stopRequested)
+                return null;
             execute(stmt.body);
             try {
                 Thread.sleep(50);
@@ -317,6 +320,8 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         try {
             this.environment = environment;
             for (Stmt statement : statements){
+                if (stopRequested)
+                    return;
                 execute(statement);
             }
         } finally {
@@ -365,7 +370,10 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     void interpret(List<Stmt> statements){
         try {
             for (Stmt statement : statements){
+                if (stopRequested)
+                    return;
                 execute(statement);
+
             }
         } catch (RuntimeError error){
             main.runtimeError(error);
