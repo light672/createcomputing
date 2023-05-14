@@ -32,7 +32,6 @@ public class Scanner {
         keywords.put("if", IF);
         keywords.put("null", NIL);
         keywords.put("or", OR);
-        keywords.put("print", PRINT);
         keywords.put("return", RETURN);
         keywords.put("ret", RETURN);
         keywords.put("var", VAR);

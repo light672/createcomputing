@@ -9,12 +9,16 @@ import com.simibubi.create.content.contraptions.base.KineticTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -23,13 +27,15 @@ public class ComputerBlockEntity extends KineticTileEntity {
     private String script = "";
     private String terminal = "";
     private boolean running = false;
+    private List<String> displayFreqs = new ArrayList<>(Arrays.asList("", "", "", "", "", ""));
 
-    private Environment globals = Environment.defaultGlobals();
+    private Environment globals = Environment.defaultGlobals(this);
 
     private final Location location = new Location(getBlockPos(), getLevel());
 
     public ComputerBlockEntity(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState) {
         super(AllTileEntities.COMPUTER.get(), blockPos, blockState);
+
     }
 
 
@@ -52,6 +58,18 @@ public class ComputerBlockEntity extends KineticTileEntity {
     public boolean getRunning(){
         return running;
     }
+    public void setDisplayFreqs(List<String> displayFreqs){
+        this.displayFreqs = displayFreqs;
+    }
+    public List<String> getDisplayFreqs(){
+        return this.displayFreqs;
+    }
+    public void setDisplayFreq(String displayFreq, int index){
+        displayFreqs.set(index, displayFreq);
+    }
+    public String getDisplayFreq(int index){
+        return displayFreqs.get(index);
+    }
     public void setGlobals(Environment globals){
         this.globals = globals;
     }
@@ -69,7 +87,8 @@ public class ComputerBlockEntity extends KineticTileEntity {
         this.script = compound.getString("Script");
         this.terminal = compound.getString("Terminal");
         this.running = compound.getBoolean("Running");
-        this.globals = defineEnvironmentFromTag(compound);
+        this.displayFreqs = getDisplayFrequenciesFromCompound(compound);
+        this.globals = defineEnvironmentFromTag(compound, this);
     }
     @Override
     protected void write(CompoundTag compound, boolean clientPacket) {
@@ -78,6 +97,8 @@ public class ComputerBlockEntity extends KineticTileEntity {
         compound.putString("Terminal", this.terminal);
         compound.putBoolean("Running", this.running);
         compound.put("Memory", environmentToTag(getGlobals()));
+        compound.put("DisplayFreqs", listToListTag(displayFreqs));
+
     }
 
     @Override
@@ -107,8 +128,8 @@ public class ComputerBlockEntity extends KineticTileEntity {
         }
         return listTag;
     }
-    private static Environment defineEnvironmentFromTag(CompoundTag compound){
-        Environment environment = Environment.defaultGlobals();
+    private static Environment defineEnvironmentFromTag(CompoundTag compound, ComputerBlockEntity computer){
+        Environment environment = Environment.defaultGlobals(computer);
         ListTag listTag = compound.getList("Memory", Tag.TAG_COMPOUND);
 
         for (int i = 0; i < listTag.size(); i++) {
@@ -130,6 +151,31 @@ public class ComputerBlockEntity extends KineticTileEntity {
         }
         return environment;
     }
+
+    private static ListTag listToListTag(List<String> list){
+        ListTag listTag = new ListTag();
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag compoundTag = new CompoundTag();
+            compoundTag.putString("Value", list.get(i));
+            listTag.add(compoundTag);
+        }
+
+        return listTag;
+    }
+
+    private static List<String> getDisplayFrequenciesFromCompound(CompoundTag compound){
+        ListTag listTag = compound.getList("DisplayFreqs", Tag.TAG_COMPOUND);
+        List<String> list = new ArrayList<>(Arrays.asList("", "", "", "", "", ""));
+        for (int i = 0; i < listTag.size(); i++) {
+            CompoundTag compoundTag = listTag.getCompound(i);
+            list.set(i, compoundTag.getString("Value"));
+        }
+        return list;
+    }
+
+
+
+
 
 
     public void stop() {

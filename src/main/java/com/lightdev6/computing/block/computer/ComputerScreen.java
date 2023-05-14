@@ -142,6 +142,7 @@ public class ComputerScreen extends AbstractSimiScreen {
                     terminal.textField.insertText("\n    \n}");
                     terminal.textField.cursor -= 2;
                     terminal.textField.selectCursor = terminal.textField.cursor;
+                    return true;
 
                 }
 

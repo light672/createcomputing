@@ -1,5 +1,7 @@
 package com.lightdev6.zinc;
 
+import com.lightdev6.computing.block.computer.ComputerBlockEntity;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +72,7 @@ public class Environment {
     }
 
 
-    public static Environment defaultGlobals() {
+    public static Environment defaultGlobals(ComputerBlockEntity computer) {
         Environment globals = new Environment();
         globals.define("clock", new ZincCallable() {
             @Override
@@ -79,7 +81,7 @@ public class Environment {
             }
 
             @Override
-            public Object call(Interpreter interpreter, List<Object> arguments) {
+            public Object call(Interpreter interpreter, List<Object> arguments, Token paren) {
                 return (double) System.currentTimeMillis() / 1000.0;
             }
 
@@ -95,7 +97,7 @@ public class Environment {
             }
 
             @Override
-            public Object call(Interpreter interpreter, List<Object> arguments) {
+            public Object call(Interpreter interpreter, List<Object> arguments, Token paren) {
                 try {
                     Thread.sleep(Math.round((double) arguments.get(0) * 1000));
                 } catch (InterruptedException e) {
@@ -116,8 +118,40 @@ public class Environment {
             }
 
             @Override
-            public Object call(Interpreter interpreter, List<Object> arguments) {
-                return arguments.get(0).toString();
+            public Object call(Interpreter interpreter, List<Object> arguments, Token paren) {
+                return Interpreter.stringify(arguments.get(0));
+            }
+        });
+        globals.define("print", new ZincCallable() {
+            @Override
+            public int arity() {
+                return 1;
+            }
+
+            @Override
+            public Object call(Interpreter interpreter, List<Object> arguments, Token paren) {
+                Zinc.log(Interpreter.stringify(arguments.get(0)), computer);
+                return null;
+            }
+        });
+        globals.define("display", new ZincCallable() {
+            @Override
+            public int arity() {
+                return 2;
+            }
+
+            @Override
+            public Object call(Interpreter interpreter, List<Object> arguments, Token paren) {
+                if (!(arguments.get(0) instanceof Double d)) {
+                    interpreter.throwError(paren, "The first argument for 'call' must be a whole number.");
+                    return null;
+                }
+                if (d % 1 != 0){
+                    interpreter.throwError(paren, "The first argument for 'call' must be a whole number.");
+                    return null;
+                }
+                computer.setDisplayFreq(Interpreter.stringify(arguments.get(1)), (int) Math.round((double)arguments.get(0)));
+                return null;
             }
         });
         return globals;

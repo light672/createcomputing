@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-
 public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
 
     private enum FunctionType{
@@ -102,11 +101,6 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
         return null;
     }
 
-    @Override
-    public Void visitPrintStmt(Stmt.Print stmt){
-        resolve(stmt.expression);
-        return null;
-    }
 
     @Override
     public Void visitReturnStmt(Stmt.Return stmt){

@@ -92,7 +92,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         if (arguments.size() != function.arity()){
             throw new RuntimeError(expr.paren, "Expected " + function.arity() + " arguments but got " + arguments.size() + ".");
         }
-        return function.call(this, arguments);
+        return function.call(this, arguments, expr.paren);
     }
 
     @Override
@@ -178,13 +178,6 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt){
         evaluate(stmt.expression);
-        return null;
-    }
-
-    @Override
-    public Void visitPrintStmt(Stmt.Print stmt){
-        Object value = evaluate(stmt.expression);
-        main.log(stringify(value));
         return null;
     }
 
@@ -306,6 +299,10 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         throw new RuntimeError(expr.name, "Only instances have properties.");
     }
 
+    public void throwError(Token t, String message){
+        throw new RuntimeError(t, message);
+    }
+
     private Object lookUpVariable(Token name, Expr expr){
         Integer distance = locals.get(expr);
         if (distance != null){
@@ -388,7 +385,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         locals.put(expr, depth);
     }
 
-    private String stringify(Object object){
+    public static String stringify(Object object){
         if (object == null) return "null";
         if (object instanceof Double){
             String text = object.toString();

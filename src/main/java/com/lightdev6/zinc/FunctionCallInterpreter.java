@@ -15,7 +15,7 @@ public class FunctionCallInterpreter extends Interpreter{
         if (arguments.size() != function.arity()){
             throw new RuntimeError(null, "Signal " + functionName + "needed " + function.arity() + " arguments but got " + arguments.size() + ".");
         }
-        function.call(this, arguments);
+        function.call(this, arguments, null);
     }
 
     @Override

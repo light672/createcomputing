@@ -1,20 +1,34 @@
 package com.lightdev6.computing;
 
+
+import static com.simibubi.create.content.logistics.block.display.AllDisplayBehaviours.assignDataBehaviour;
+
 import com.lightdev6.computing.block.computer.Computer;
+import com.lightdev6.computing.block.computer.FrequencyDisplaySource;
+import com.lightdev6.computing.block.computer.TerminalDisplaySource;
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetector;
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorItem;
+import com.simibubi.create.content.logistics.block.display.DisplayBehaviour;
+import com.simibubi.create.content.logistics.block.display.source.DisplaySource;
+import com.simibubi.create.content.logistics.block.display.target.DisplayTarget;
 import com.simibubi.create.foundation.block.BlockStressDefaults;
 import com.simibubi.create.foundation.data.AssetLookup;
+import com.simibubi.create.foundation.utility.RegisteredObjects;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.builders.ItemBuilder;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import com.tterrag.registrate.util.nullness.NonNullConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.lightdev6.computing.Computing.REGISTRATE;
 
@@ -29,6 +43,8 @@ public class AllBlocks {
             .initialProperties(() -> Blocks.STONE)
             .transform(pickaxe())
             .transform(BlockStressDefaults.setImpact(12))
+            .onRegister(assignDataBehaviour(new TerminalDisplaySource(), "terminal"))
+            .onRegister(assignDataBehaviour(new FrequencyDisplaySource(), "frequency"))
             .simpleItem()
             .properties(BlockBehaviour.Properties::noOcclusion)
             .register();
@@ -49,6 +65,8 @@ public class AllBlocks {
         return b -> b.model(AssetLookup::customItemModel)
                 .build();
     }
+
+
 
     public static void register(){}
 

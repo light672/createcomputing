@@ -33,7 +33,6 @@ public class GenerateAst {
                 "Expression : Expr expression",
                 "Function : Token name, List<Token> params," + " List<Stmt> body",
                 "If : Expr condition, Stmt thenBranch," + " Stmt elseBranch",
-                "Print : Expr expression",
                 "Return : Token keyword, Expr value",
                 "Var : Token name, Expr initializer",
                 "While : Expr condition, Stmt body",
@@ -45,7 +44,7 @@ public class GenerateAst {
     private static void defineAst(String outputDir, String baseName, List<String> types) throws IOException {
         String path = outputDir + "/" + baseName + ".java";
         PrintWriter writer = new PrintWriter(path, "UTF-8");
-        writer.println("package com.lightdev6.cscript;");
+        writer.println("package com.lightdev6.zinc;");
         writer.println();
         writer.println("import java.util.List;");
         writer.println();

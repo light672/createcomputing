@@ -14,7 +14,7 @@ public class Zinc {
 
     public Zinc(ComputerBlockEntity computer){
         this.computer = computer;
-        interpreter = new Interpreter(this, Environment.defaultGlobals());
+        interpreter = new Interpreter(this, Environment.defaultGlobals(computer));
         functionInterpreter = new FunctionCallInterpreter(this, computer.getGlobals());
     }
 
@@ -72,11 +72,16 @@ public class Zinc {
     }
 
     void runtimeError(RuntimeError error){
-        System.err.println(error.getMessage() + "\n[line " + error.token.line + "]");
+        if (error.token != null){
+            System.err.println(error.getMessage() + "\n[line " + error.token.line + "]");
+        } else {
+            System.err.println(error.getMessage() + "\n[Occurred outside the script]");
+        }
+
         hadRuntimeError = true;
     }
 
-    public void log(String message){
+    public static void log(String message, ComputerBlockEntity computer){
         computer.setTerminal(computer.getTerminal() + message + "\n");
     }
 

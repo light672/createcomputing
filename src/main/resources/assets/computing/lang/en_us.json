@@ -1,5 +1,13 @@
 {
   "item.computing.silicon": "Silicon",
   "block.computing.computer": "Computer",
-  "block.computing.redstone_detector": "Redstone Detector"
+  "block.computing.redstone_detector": "Redstone Detector",
+  "computing.display_source.computer_source_terminal": "Latest Entry in Terminal",
+  "computing.display_source.computer_source_frequency": "From Display Frequency",
+  "create.display_source.computer_display_frequency.display_zero": "Frequency 0",
+  "create.display_source.computer_display_frequency.display_one": "Frequency 1",
+  "create.display_source.computer_display_frequency.display_two": "Frequency 2",
+  "create.display_source.computer_display_frequency.display_three": "Frequency 3",
+  "create.display_source.computer_display_frequency.display_four": "Frequency 4",
+  "create.display_source.computer_display_frequency.display_five": "Frequency 5"
 }
