@@ -154,6 +154,28 @@ public class Environment {
                 return null;
             }
         });
+        globals.define("write", new ZincCallable() {
+            @Override
+            public int arity() {
+                return 2;
+            }
+
+            @Override
+            public Object call(Interpreter interpreter, List<Object> arguments, Token paren) {
+                return computer.findAndModifyPlate(Interpreter.stringify(arguments.get(0)), arguments.get(1));
+            }
+        });
+        globals.define("read", new ZincCallable() {
+            @Override
+            public int arity() {
+                return 1;
+            }
+
+            @Override
+            public Object call(Interpreter interpreter, List<Object> arguments, Token paren) {
+                return computer.readPlate(Interpreter.stringify(arguments.get(0)));
+            }
+        });
         return globals;
     }
 

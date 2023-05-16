@@ -4,25 +4,42 @@ import com.lightdev6.computing.AllTileEntities;
 import com.lightdev6.computing.Computing;
 import com.lightdev6.computing.Location;
 import com.lightdev6.zinc.Environment;
+import com.lightdev6.zinc.Interpreter;
 import com.lightdev6.zinc.ZincInstance;
+import com.simibubi.create.AllItems;
 import com.simibubi.create.content.contraptions.base.KineticTileEntity;
+import com.simibubi.create.content.schematics.ItemRequirement;
+import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.foundation.utility.Iterate;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import java.sql.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class ComputerBlockEntity extends KineticTileEntity {
+
+    private static final int NEIGHBOUR_CHECKING = 100;
+    private int neighbourCheckCooldown;
 
     private String script = "";
     private String terminal = "";
@@ -33,8 +50,11 @@ public class ComputerBlockEntity extends KineticTileEntity {
 
     private final Location location = new Location(getBlockPos(), getLevel());
 
+    private LinkedHashSet<LazyOptional<IItemHandler>> attachedInventories;
+
     public ComputerBlockEntity(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState) {
         super(AllTileEntities.COMPUTER.get(), blockPos, blockState);
+        attachedInventories = new LinkedHashSet<>();
 
     }
 
@@ -58,12 +78,6 @@ public class ComputerBlockEntity extends KineticTileEntity {
     public boolean getRunning(){
         return running;
     }
-    public void setDisplayFreqs(List<String> displayFreqs){
-        this.displayFreqs = displayFreqs;
-    }
-    public List<String> getDisplayFreqs(){
-        return this.displayFreqs;
-    }
     public void setDisplayFreq(String displayFreq, int index){
         displayFreqs.set(index, displayFreq);
     }
@@ -79,6 +93,127 @@ public class ComputerBlockEntity extends KineticTileEntity {
     public Location getLocation(){
         return location;
     }
+
+
+
+
+    public void findInventories(){
+        attachedInventories.clear();
+
+        for (Direction facing : Iterate.directions){
+            if (!level.isLoaded(worldPosition.relative(facing)))
+                continue;
+            BlockEntity tileEntity = level.getBlockEntity(worldPosition.relative(facing));
+
+            if (tileEntity != null){
+                LazyOptional<IItemHandler> capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
+                if (capability.isPresent()){
+                    attachedInventories.add(capability);
+                }
+            }
+        }
+    }
+
+    public Object readPlate(String identifier){
+        attachedInventories.removeIf(cap -> !cap.isPresent());
+        for (LazyOptional<IItemHandler> cap : attachedInventories){
+            IItemHandler iItemHandler = cap.orElse(EmptyHandler.INSTANCE);
+            for (int i = 0; i < iItemHandler.getSlots(); i++) {
+                ItemStack currentStack = iItemHandler.getStackInSlot(i);
+                if (currentStack.getItem() == AllItems.WRENCH.get() && currentStack.hasTag() && currentStack.getTag().getString("Identifier").equals(identifier)){
+                    CompoundTag compoundTag = currentStack.getTag();
+                    Object value;
+                    Byte b = compoundTag.getTagType("Value");
+                    if (b == Tag.TAG_DOUBLE) {
+                        value = compoundTag.getDouble("Value");
+                    } else if (b == Tag.TAG_STRING) {
+                        value = compoundTag.getString("Value");
+                    } else if (b == Tag.TAG_BYTE) {
+                        value = compoundTag.getBoolean("Value");
+                    } else {
+                        value = null;
+                    }
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean findAndModifyPlate(String identifier, Object data){
+        attachedInventories.removeIf(cap -> !cap.isPresent());
+        int firstEmptyAvailableSlot = -1;
+        IItemHandler firstEmptyAvailableSlotIItemHandler = null;
+        int matchingIdentifierSlot = -1;
+        IItemHandler matchingIdentifierSlotIItemHandler = null;
+        for (LazyOptional<IItemHandler> cap : attachedInventories){
+            IItemHandler iItemHandler = cap.orElse(EmptyHandler.INSTANCE);
+            for (int i = 0; i < iItemHandler.getSlots(); i++) {
+                ItemStack currentStack = iItemHandler.getStackInSlot(i);
+                if (currentStack.getItem() == AllItems.WRENCH.get()){
+                    if (!currentStack.hasTag()){
+                        //iItemHandler.insertItem(i, writeToPlate(identifier,data,iItemHandler.extractItem(i,1, false)), false);
+                        if (firstEmptyAvailableSlot == -1) {
+                            firstEmptyAvailableSlot = i;
+                            firstEmptyAvailableSlotIItemHandler = iItemHandler;
+                        }
+                    } else if (currentStack.getTag().getString("Identifier").equals(identifier)){
+                        //iItemHandler.insertItem(i, writeToPlate(identifier,data,iItemHandler.extractItem(i,1, false)), false);
+                        if (matchingIdentifierSlot == -1) {
+                            matchingIdentifierSlot = i;
+                            matchingIdentifierSlotIItemHandler = iItemHandler;
+                        }
+                    } else {
+                        continue;
+                    }
+                } else {
+                    continue;
+                }
+            }
+        }
+        if (matchingIdentifierSlot != -1){
+            matchingIdentifierSlotIItemHandler.insertItem(
+                    matchingIdentifierSlot, writeToPlate(
+                            identifier,data,matchingIdentifierSlotIItemHandler.extractItem(matchingIdentifierSlot,1, false)
+                    ),
+                    false);
+            return true;
+        } else if (firstEmptyAvailableSlot != -1){
+            firstEmptyAvailableSlotIItemHandler.insertItem(
+                    firstEmptyAvailableSlot, writeToPlate(
+                            identifier,data,firstEmptyAvailableSlotIItemHandler.extractItem(firstEmptyAvailableSlot,1, false)
+                    ),
+                    false);
+            return true;
+        }
+        return false;
+    }
+
+    private ItemStack writeToPlate(String identifier, Object data, ItemStack modifiablePlate){
+
+        CompoundTag compoundTag = new CompoundTag();
+        if (data instanceof Double d){
+            compoundTag.putString("Identifier", identifier);
+            compoundTag.putDouble("Value", d);
+            modifiablePlate.setTag(compoundTag);
+            modifiablePlate.setHoverName(Component.literal(identifier).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.ITALIC));
+        } else if (data instanceof String s){
+            compoundTag.putString("Identifier", identifier);
+            compoundTag.putString("Value", s);
+            modifiablePlate.setTag(compoundTag);
+            modifiablePlate.setHoverName(Component.literal(identifier).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.ITALIC));
+        } else if (data instanceof Boolean b){
+            compoundTag.putString("Identifier", identifier);
+            compoundTag.putBoolean("Value", b);
+            modifiablePlate.setTag(compoundTag);
+            modifiablePlate.setHoverName(Component.literal(identifier).withStyle(ChatFormatting.BOLD).withStyle(ChatFormatting.ITALIC));
+        }
+        return modifiablePlate;
+    }
+
+
+
+
 
 
     @Override
@@ -108,6 +243,11 @@ public class ComputerBlockEntity extends KineticTileEntity {
             stop();
             setTerminal(getTerminal() + "ERROR: Speed requirement not fulfilled, stopped program." + "\n");
         }
+
+        if (neighbourCheckCooldown-- <= 0){
+            neighbourCheckCooldown = NEIGHBOUR_CHECKING;
+            findInventories();
+        }
     }
 
     private static ListTag environmentToTag(Environment environment){
@@ -121,6 +261,10 @@ public class ComputerBlockEntity extends KineticTileEntity {
             } else if (entry.getValue() instanceof String s){
                 compoundTag.putString("Identifier", entry.getKey());
                 compoundTag.putString("Value", s);
+                listTag.add(compoundTag);
+            } else if (entry.getValue() instanceof Boolean b){
+                compoundTag.putString("Identifier", entry.getKey());
+                compoundTag.putBoolean("Value", b);
                 listTag.add(compoundTag);
             } else if (entry.getValue() instanceof ZincInstance){
                 //handle classes
@@ -137,10 +281,12 @@ public class ComputerBlockEntity extends KineticTileEntity {
             String name = compoundTag.getString("Identifier");
             Object value;
             Byte b = compoundTag.getTagType("Value");
-            if (b == Tag.TAG_DOUBLE){
+            if (b == Tag.TAG_DOUBLE) {
                 value = compoundTag.getDouble("Value");
-            } else if (b == Tag.TAG_STRING){
+            } else if (b == Tag.TAG_STRING) {
                 value = compoundTag.getString("Value");
+            } else if (b == Tag.TAG_BYTE) {
+                value = compoundTag.getBoolean("Value");
             } else if (b == Tag.TAG_COMPOUND){
                 //handle classes
                 value = null;
