@@ -1,9 +1,10 @@
 package com.lightdev6.computing.block.computer;
 
-import com.simibubi.create.content.logistics.block.display.DisplayLinkContext;
-import com.simibubi.create.content.logistics.block.display.source.SingleLineDisplaySource;
-import com.simibubi.create.content.logistics.block.display.target.DisplayTargetStats;
-import com.simibubi.create.foundation.gui.ModularGuiLineBuilder;
+
+import com.simibubi.create.content.redstone.displayLink.DisplayLinkContext;
+import com.simibubi.create.content.redstone.displayLink.source.SingleLineDisplaySource;
+import com.simibubi.create.content.redstone.displayLink.target.DisplayTargetStats;
+import com.simibubi.create.content.trains.display.FlapDisplaySection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
@@ -15,7 +16,7 @@ public class TerminalDisplaySource extends SingleLineDisplaySource {
     protected MutableComponent provideLine(DisplayLinkContext context, DisplayTargetStats stats) {
         if (!(context.level() instanceof ServerLevel level))
             return null;
-        if (!(context.getSourceTE() instanceof ComputerBlockEntity computer))
+        if (!(context.getSourceBlockEntity() instanceof ComputerBlockEntity computer))
             return null;
         if (!computer.isSpeedRequirementFulfilled())
             return null;
@@ -31,5 +32,15 @@ public class TerminalDisplaySource extends SingleLineDisplaySource {
     @Override
     public int getPassiveRefreshTicks() {
         return 10;
+    }
+
+    @Override
+    protected String getFlapDisplayLayoutName(DisplayLinkContext context) {
+        return "Instant";
+    }
+
+    @Override
+    protected FlapDisplaySection createSectionForValue(DisplayLinkContext context, int size) {
+        return new FlapDisplaySection(size * FlapDisplaySection.MONOSPACE, "instant", false, false);
     }
 }

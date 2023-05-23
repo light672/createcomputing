@@ -1,13 +1,12 @@
 package com.lightdev6.computing.packets;
 
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorBlockEntity;
-import com.simibubi.create.foundation.networking.TileEntityConfigurationPacket;
-import com.simibubi.create.foundation.tileEntity.SyncedTileEntity;
+import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class ConfigureRedstoneDetectorSignalPacket extends TileEntityConfigurationPacket<RedstoneDetectorBlockEntity> {
+public class ConfigureRedstoneDetectorSignalPacket extends BlockEntityConfigurationPacket<RedstoneDetectorBlockEntity> {
     private String signalName;
     public ConfigureRedstoneDetectorSignalPacket(BlockPos pos, String signalName) {
         super(pos);

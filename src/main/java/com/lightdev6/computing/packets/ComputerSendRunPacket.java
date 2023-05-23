@@ -27,16 +27,15 @@ public class ComputerSendRunPacket extends SimplePacketBase {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        NetworkEvent.Context ctx = context.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer player = ctx.getSender();
+    public boolean handle(NetworkEvent.Context context) {
+        context.enqueueWork(() -> {
+            ServerPlayer player = context.getSender();
             ServerLevel level = player.getLevel();
             if (level.getBlockEntity(pos) instanceof ComputerBlockEntity computer && computer.isSpeedRequirementFulfilled()){
                 Computing.runProgram(computer.getScript(), computer);
                 computer.setRunning(true);
             }
         });
-        ctx.setPacketHandled(true);
+        return true;
     }
 }

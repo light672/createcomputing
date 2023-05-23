@@ -1,7 +1,7 @@
 package com.lightdev6.computing.packets;
 
 import com.lightdev6.computing.block.computer.ComputerBlockEntity;
-import com.simibubi.create.foundation.networking.TileEntityConfigurationPacket;
+import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -9,7 +9,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class ConfigureComputerScriptPacket extends TileEntityConfigurationPacket<ComputerBlockEntity> {
+public class ConfigureComputerScriptPacket extends BlockEntityConfigurationPacket<ComputerBlockEntity> {
     private String script;
     public ConfigureComputerScriptPacket(FriendlyByteBuf buffer) {
         super(buffer);

@@ -5,9 +5,6 @@ import com.lightdev6.computing.AllPackets;
 import com.lightdev6.computing.packets.RedstoneDetectorPlacementPacket;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.CreateClient;
-import com.simibubi.create.content.logistics.block.depot.EjectorPlacementPacket;
-import com.simibubi.create.content.logistics.block.depot.EjectorTileEntity;
-import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -103,7 +100,7 @@ public class RedstoneDetectorTargetHandler {
         BlockPos pos = result.getBlockPos();
 
         BlockEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
-        if (!(te instanceof EjectorTileEntity)) {
+        if (!(te instanceof RedstoneDetectorBlockEntity)) {
             lastHoveredBlockPos = -1;
             currentSelection = null;
             return;

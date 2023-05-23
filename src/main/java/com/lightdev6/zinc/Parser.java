@@ -6,7 +6,7 @@ import java.util.List;
 import static com.lightdev6.zinc.TokenType.*;
 
 class Parser {
-    private static class ParseError extends RuntimeException{};
+    private static class ParseError extends RuntimeException{}
     private final List<Token> tokens;
     private final Zinc main;
     private int current = 0;
@@ -28,8 +28,7 @@ class Parser {
             if(expr instanceof Expr.Variable){
                 Token name = ((Expr.Variable)expr).name;
                 return new Expr.Assign(name, value);
-            } else if (expr instanceof Expr.Get){
-                Expr.Get get = (Expr.Get)expr;
+            } else if (expr instanceof Expr.Get get){
                 return new Expr.Set(get.object, get.name, value);
             }
 
@@ -201,13 +200,6 @@ class Parser {
         if (match(NUMBER, STRING)){
             return new Expr.Literal(previous().literal);
         }
-        if(match(SUPER)){
-            Token keyword = previous();
-            consume(DOT, "Expect '.' after 'super'.");
-            Token method = consume(IDENTIFIER, "Expect superclass method name.");
-            return new Expr.Super(keyword, method);
-        }
-        if (match(THIS)) return new Expr.This(previous());
 
         if (match(IDENTIFIER)){
             return new Expr.Variable(previous());
@@ -237,7 +229,7 @@ class Parser {
         while(!isAtEnd()){
             if (previous().type == SEMICOLON) return;
             switch (peek().type){
-                case CLASS:
+                case STRUCT:
                 case FUN:
                 case VAR:
                 case FOR:
@@ -278,22 +270,6 @@ class Parser {
     }
 
     private Stmt forStatement() {
-        /*
-        Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
-        consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
-        List<Token> parameters = new ArrayList<>();
-        if(!check(RIGHT_PAREN)){
-            do{
-                if (parameters.size() >= 255){
-                    error(peek(), "Can't have more that 255 parameters.");
-                }
-                parameters.add(consume(IDENTIFIER, "Expect parameter name."));
-            } while (match(COMMA));
-        }
-        consume(RIGHT_PAREN, "Expect ')' after parameters.");
-        consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
-        List<Stmt> body = block();
-         */
         consume(LEFT_PAREN, "Expect '(' after 'for'.");
         Token initializer;
 
@@ -310,6 +286,8 @@ class Parser {
 
         return new Stmt.For(initializer, left, colon, body);
     }
+
+
 
     private Stmt whileStatement(){
         consume(LEFT_PAREN, "Expect '(' after 'while'.");
@@ -349,7 +327,7 @@ class Parser {
 
     private Stmt declaration(){
         try {
-            if (match(CLASS)) return classDeclaration();
+            if (match(STRUCT)) return struct();
             if(match(FUN)) return function("function");
             if (match(VAR)) return varDeclaration();
             return statement();
@@ -359,22 +337,7 @@ class Parser {
         }
     }
 
-    private Stmt classDeclaration(){
-        Token name = consume(IDENTIFIER, "Expect class name.");
-        Expr.Variable superclass = null;
-        if (match(FROM)){
-            consume(IDENTIFIER, "Expect superclass name.");
-            superclass = new Expr.Variable(previous());
-        }
-        consume(LEFT_BRACE, "Expect '{' before class body.");
 
-        List<Stmt.Function> methods = new ArrayList<>();
-        while(!check(RIGHT_BRACE) && !isAtEnd()){
-            methods.add(function("method"));
-        }
-        consume(RIGHT_BRACE, "Expect '}' after class body.");
-        return new Stmt.Class(name, superclass, methods);
-    }
 
     private Stmt.Function function(String kind){
         Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
@@ -392,6 +355,20 @@ class Parser {
         consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
         List<Stmt> body = block();
         return new Stmt.Function(name, parameters, body);
+    }
+
+    private Stmt struct(){
+        Token name = consume(IDENTIFIER, "Expect struct name.");
+        consume(LEFT_BRACE, "Expect '{' before struct body");
+        List<Stmt.Var> fields = new ArrayList<>();
+        while (!check(RIGHT_BRACE)){
+            consume(VAR, "Can only define variables in structures.");
+            Token fieldName = consume(IDENTIFIER, "Expect variable name.");
+            consume(SEMICOLON, "Expected ';' after variable name");
+            fields.add(new Stmt.Var(fieldName, null));
+        }
+        consume(RIGHT_BRACE, "Expect '}' after structure body.");
+        return new Stmt.Structure(name, fields);
     }
 
     private Stmt varDeclaration(){

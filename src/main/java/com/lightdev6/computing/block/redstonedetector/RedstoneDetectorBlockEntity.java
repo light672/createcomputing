@@ -1,8 +1,7 @@
 package com.lightdev6.computing.block.redstonedetector;
 
 import com.lightdev6.computing.AllTileEntities;
-import com.simibubi.create.content.contraptions.base.KineticTileEntity;
-import com.simibubi.create.foundation.tileEntity.SyncedTileEntity;
+import com.simibubi.create.foundation.blockEntity.SyncedBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -12,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-public class RedstoneDetectorBlockEntity extends SyncedTileEntity {
+public class RedstoneDetectorBlockEntity extends SyncedBlockEntity {
     private String signalName = "";
     private BlockPos targetPos = getBlockPos();
 

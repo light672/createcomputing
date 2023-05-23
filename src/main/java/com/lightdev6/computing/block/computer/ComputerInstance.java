@@ -2,18 +2,23 @@ package com.lightdev6.computing.block.computer;
 
 import com.jozufozu.flywheel.api.Instancer;
 import com.jozufozu.flywheel.api.MaterialManager;
-import com.simibubi.create.AllBlockPartials;
-import com.simibubi.create.content.contraptions.base.KineticTileEntity;
-import com.simibubi.create.content.contraptions.base.SingleRotatingInstance;
-import com.simibubi.create.content.contraptions.base.flwdata.RotatingData;
+import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.content.kinetics.base.flwdata.RotatingData;
+import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogInstance;
+import com.simibubi.create.foundation.render.AllMaterialSpecs;
 
-public class ComputerInstance extends SingleRotatingInstance {
-    public ComputerInstance(MaterialManager modelManager, KineticTileEntity tile) {
-        super(modelManager, tile);
+public class ComputerInstance extends EncasedCogInstance {
+
+
+    public ComputerInstance(MaterialManager modelManager, ComputerBlockEntity blockEntity) {
+        super(modelManager, blockEntity, false);
     }
 
+
     @Override
-    protected Instancer<RotatingData> getModel() {
-        return getRotatingMaterial().getModel(AllBlockPartials.SHAFTLESS_COGWHEEL, blockEntity.getBlockState());
+    protected Instancer<RotatingData> getCogModel() {
+        return materialManager.defaultSolid()
+                .material(AllMaterialSpecs.ROTATING)
+                .getModel(AllPartialModels.SHAFTLESS_COGWHEEL, blockEntity.getBlockState());
     }
 }

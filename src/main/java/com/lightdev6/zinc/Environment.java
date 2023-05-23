@@ -71,6 +71,14 @@ public class Environment {
         return environment;
     }
 
+    public void resolveEnvironment(){
+        for (Map.Entry<String, Object> entry : values.entrySet()){
+            if(entry.getValue() instanceof ZincStructureConversionObject o){
+                values.replace(entry.getKey(), new ZincObject((ZincStructure)get(new Token(TokenType.IDENTIFIER, o.getStructureName(), null, 0)), o.getFields()));
+            }
+        }
+    }
+
 
     public static Environment defaultGlobals(ComputerBlockEntity computer) {
         Environment globals = new Environment();

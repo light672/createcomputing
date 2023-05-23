@@ -69,7 +69,12 @@ public enum AllPackets {
         private LoadedPacket(Class<T> type, Function<FriendlyByteBuf, T> factory, NetworkDirection direction) {
             encoder = T::write;
             decoder = factory;
-            handler = T::handle;
+            handler = (packet, contextSupplier) -> {
+                NetworkEvent.Context context = contextSupplier.get();
+                if (packet.handle(context)) {
+                    context.setPacketHandled(true);
+                }
+            };
             this.type = type;
             this.direction = direction;
         }

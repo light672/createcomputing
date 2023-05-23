@@ -3,13 +3,9 @@ package com.lightdev6.computing.block.computer;
 import com.lightdev6.computing.AllTileEntities;
 import com.lightdev6.computing.Computing;
 import com.lightdev6.computing.Location;
-import com.lightdev6.zinc.Environment;
-import com.lightdev6.zinc.Interpreter;
-import com.lightdev6.zinc.ZincInstance;
+import com.lightdev6.zinc.*;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.content.contraptions.base.KineticTileEntity;
-import com.simibubi.create.content.schematics.ItemRequirement;
-import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.utility.Iterate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -18,25 +14,20 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.EmptyHandler;
+import org.checkerframework.checker.units.qual.C;
 
-import java.sql.Array;
 import java.util.*;
-import java.util.function.Predicate;
 
-public class ComputerBlockEntity extends KineticTileEntity {
+public class ComputerBlockEntity extends KineticBlockEntity {
 
     private static final int NEIGHBOUR_CHECKING = 100;
     private int neighbourCheckCooldown;
@@ -266,8 +257,11 @@ public class ComputerBlockEntity extends KineticTileEntity {
                 compoundTag.putString("Identifier", entry.getKey());
                 compoundTag.putBoolean("Value", b);
                 listTag.add(compoundTag);
-            } else if (entry.getValue() instanceof ZincInstance){
-                //handle classes
+            } else if (entry.getValue() instanceof ZincObject s){
+                compoundTag.putString("Identifier", entry.getKey());
+                compoundTag.put("Value", structObjectToTag(s));
+                compoundTag.putString("StructureIdentifier", s.getStructure().getName());
+                listTag.add(compoundTag);
             }
         }
         return listTag;
@@ -287,9 +281,8 @@ public class ComputerBlockEntity extends KineticTileEntity {
                 value = compoundTag.getString("Value");
             } else if (b == Tag.TAG_BYTE) {
                 value = compoundTag.getBoolean("Value");
-            } else if (b == Tag.TAG_COMPOUND){
-                //handle classes
-                value = null;
+            } else if (b == Tag.TAG_LIST){
+                value = tagToStructObject(compoundTag);
             } else {
                 value = null;
             }
@@ -297,6 +290,59 @@ public class ComputerBlockEntity extends KineticTileEntity {
         }
         return environment;
     }
+
+    private static ListTag structObjectToTag(ZincObject struct){
+        ListTag listTag = new ListTag();
+        for (Map.Entry<String, Object> entry : struct.getFields().entrySet()){
+            CompoundTag entryTag = new CompoundTag();
+            if (entry.getValue() instanceof Double d){
+                entryTag.putString("Identifier", entry.getKey());
+                entryTag.putDouble("Value", d);
+                listTag.add(entryTag);
+            } else if (entry.getValue() instanceof String s){
+                entryTag.putString("Identifier", entry.getKey());
+                entryTag.putString("Value", s);
+                listTag.add(entryTag);
+            } else if (entry.getValue() instanceof Boolean b){
+                entryTag.putString("Identifier", entry.getKey());
+                entryTag.putBoolean("Value", b);
+            } else if (entry.getValue() instanceof ZincObject s){
+                entryTag.putString("Identifier", entry.getKey());
+                entryTag.put("Value",structObjectToTag(s));
+            }
+        }
+
+        return listTag;
+    }
+
+    private static ZincStructureConversionObject tagToStructObject(CompoundTag compound){
+        String structureName = compound.getString("StructureIdentifier");
+        ListTag listTag = compound.getList("Value", Tag.TAG_COMPOUND);
+        Map<String, Object> fields = new HashMap<>();
+        for (int i = 0; i < listTag.size(); i++) {
+            CompoundTag compoundTag = listTag.getCompound(i);
+            String identifier = compoundTag.getString("Identifier");
+            Object value;
+            Byte b = compoundTag.getTagType("Value");
+            if (b == Tag.TAG_DOUBLE){
+                value = compoundTag.getDouble("Value");
+                fields.put(identifier, value);
+            } else if (b == Tag.TAG_STRING){
+                value = compoundTag.getString("Value");
+                fields.put(identifier, value);
+            } else if (b == Tag.TAG_BYTE){
+                value = compoundTag.getBoolean("Value");
+                fields.put(identifier, value);
+            } else if (b == Tag.TAG_LIST){
+                value = tagToStructObject(compoundTag);
+                fields.put(identifier, value);
+            }
+        }
+        return new ZincStructureConversionObject(structureName, fields);
+    }
+
+
+
 
     private static ListTag listToListTag(List<String> list){
         ListTag listTag = new ListTag();

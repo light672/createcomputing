@@ -26,8 +26,8 @@ public class ComputerSendStopPacket extends SimplePacketBase {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        NetworkEvent.Context ctx = context.get();
+    public boolean handle(NetworkEvent.Context context) {
+        NetworkEvent.Context ctx = context;
         ctx.enqueueWork(() -> {
             ServerPlayer player = ctx.getSender();
             ServerLevel level = player.getLevel();
@@ -35,6 +35,6 @@ public class ComputerSendStopPacket extends SimplePacketBase {
                 computer.stop();
             }
         });
-        ctx.setPacketHandled(true);
+        return true;
     }
 }

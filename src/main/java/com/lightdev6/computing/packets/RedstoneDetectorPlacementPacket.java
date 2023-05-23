@@ -2,7 +2,6 @@ package com.lightdev6.computing.packets;
 
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorBlockEntity;
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorTargetHandler;
-import com.simibubi.create.content.logistics.block.depot.EjectorPlacementPacket;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -36,9 +35,9 @@ public class RedstoneDetectorPlacementPacket extends SimplePacketBase {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        context.get().enqueueWork(() -> {
-            ServerPlayer player = context.get().getSender();
+    public boolean handle(NetworkEvent.Context context) {
+        context.enqueueWork(() -> {
+            ServerPlayer player = context.getSender();
             if (player == null)
                 return;
             Level world = player.level;
@@ -48,8 +47,9 @@ public class RedstoneDetectorPlacementPacket extends SimplePacketBase {
             if (te instanceof RedstoneDetectorBlockEntity)
                 ((RedstoneDetectorBlockEntity) te).setTargetPos(targetPos);
         });
-        context.get().setPacketHandled(true);
+        return true;
     }
+
 
     public static class ClientBoundRequest extends SimplePacketBase {
         BlockPos pos;
@@ -66,9 +66,9 @@ public class RedstoneDetectorPlacementPacket extends SimplePacketBase {
         }
 
         @Override
-        public void handle(Supplier<NetworkEvent.Context> context) {
-            context.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RedstoneDetectorTargetHandler.flushSettings(pos)));
-            context.get().setPacketHandled(true);
+        public boolean handle(NetworkEvent.Context context) {
+            context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RedstoneDetectorTargetHandler.flushSettings(pos)));
+            return true;
         }
     }
 }

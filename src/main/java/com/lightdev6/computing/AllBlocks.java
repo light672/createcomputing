@@ -1,17 +1,15 @@
 package com.lightdev6.computing;
 
 
-import static com.simibubi.create.content.logistics.block.display.AllDisplayBehaviours.assignDataBehaviour;
+import static com.simibubi.create.content.redstone.displayLink.AllDisplayBehaviours.assignDataBehaviour;
+
 
 import com.lightdev6.computing.block.computer.Computer;
 import com.lightdev6.computing.block.computer.FrequencyDisplaySource;
 import com.lightdev6.computing.block.computer.TerminalDisplaySource;
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetector;
 import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorItem;
-import com.simibubi.create.content.logistics.block.display.DisplayBehaviour;
-import com.simibubi.create.content.logistics.block.display.source.DisplaySource;
-import com.simibubi.create.content.logistics.block.display.target.DisplayTarget;
-import com.simibubi.create.foundation.block.BlockStressDefaults;
+import com.simibubi.create.content.kinetics.BlockStressDefaults;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.utility.RegisteredObjects;
 import com.tterrag.registrate.builders.BlockBuilder;

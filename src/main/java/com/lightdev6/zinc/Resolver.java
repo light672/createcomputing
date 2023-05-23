@@ -9,21 +9,13 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
     private enum FunctionType{
         NONE,
         FUNCTION,
-        INITIALIZER,
-        METHOD
     }
 
-    private enum ClassType{
-        NONE,
-        CLASS,
-        SUBCLASS
-    }
 
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
     private final Zinc main;
     private FunctionType currentFunction = FunctionType.NONE;
-    private ClassType currentClass = ClassType.NONE;
 
 
 
@@ -32,15 +24,16 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
         this.interpreter = interpreter;
     }
 
+
     @Override
-    public Void visitGetExpr(Expr.Get expr){
+    public Void visitSetExpr(Expr.Set expr) {
+        resolve(expr.value);
         resolve(expr.object);
         return null;
     }
 
     @Override
-    public Void visitSetExpr(Expr.Set expr){
-        resolve(expr.value);
+    public Void visitGetExpr(Expr.Get expr) {
         resolve(expr.object);
         return null;
     }
@@ -94,6 +87,14 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
     }
 
     @Override
+    public Void visitStructureStmt(Stmt.Structure stmt) {
+        declare(stmt.name);
+        define(stmt.name);
+        resolveStructure(stmt);
+        return null;
+    }
+
+    @Override
     public Void visitIfStmt(Stmt.If stmt){
         resolve(stmt.condition);
         resolve(stmt.thenBranch);
@@ -109,9 +110,6 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
         }
         if (stmt.value != null){
             resolve(stmt.value);
-            if (currentFunction == FunctionType.INITIALIZER){
-                main.error(stmt.keyword, "Can't return a value from an initializer.");
-            }
         }
         return null;
     }
@@ -145,58 +143,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
         return null;
     }
 
-    @Override
-    public Void visitClassStmt(Stmt.Class stmt){
-        ClassType enclosingClass = currentClass;
-        currentClass = ClassType.CLASS;
-        declare(stmt.name);
-        define(stmt.name);
-        if (stmt.superclass != null && stmt.name.lexeme.equals(stmt.superclass.name.lexeme)){
-            main.error(stmt.superclass.name, "A class cannot inherit from itself.");
-        }
-        if (stmt.superclass != null){
-            currentClass = ClassType.SUBCLASS;
-            resolve(stmt.superclass);
-        }
-        if (stmt.superclass != null){
-            beginScope();
-            scopes.peek().put("super", true);
-        }
-        beginScope();
-        scopes.peek().put("this", true);
-        for (Stmt.Function method : stmt.methods){
-            FunctionType delcaration = FunctionType.METHOD;
-            if (method.name.lexeme.equals("init")){
-                delcaration = FunctionType.INITIALIZER;
-            }
-            resolveFunction(method, delcaration);
-        }
-        endScope();
-        if(stmt.superclass != null) endScope();
-        currentClass = enclosingClass;
-        return null;
-    }
 
-    @Override
-    public Void visitThisExpr(Expr.This expr){
-        if (currentClass == ClassType.NONE){
-            main.error(expr.keyword, "Can't use 'this' outside of a class.");
-            return null;
-        }
-        resolveLocal(expr, expr.keyword);
-        return null;
-    }
-
-    @Override
-    public Void visitSuperExpr(Expr.Super expr){
-        if (currentClass == ClassType.NONE){
-            main.error(expr.keyword, "Can't use 'super' outside of a class.");
-        } else if (currentClass != ClassType.SUBCLASS){
-            main.error(expr.keyword, "Can't ise 'super' in a class with no superclass");
-        }
-        resolveLocal(expr, expr.keyword);
-        return null;
-    }
 
     @Override
     public Void visitGroupingExpr(Expr.Grouping expr){
@@ -248,6 +195,15 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void>{
         resolve(function.body);
         endScope();
         currentFunction = enclosingFunction;
+    }
+
+    private void resolveStructure(Stmt.Structure structure){
+        beginScope();
+        for (Stmt.Var variable : structure.fields){
+            declare(variable.name);
+            define(variable.name);
+        }
+        endScope();
     }
 
     private void resolveFor(Stmt.For forr){

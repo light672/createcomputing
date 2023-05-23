@@ -21,7 +21,7 @@ public class Scanner {
     static {
         keywords = new HashMap<>();
         keywords.put("and", AND);
-        keywords.put("class", CLASS);
+        keywords.put("struct", STRUCT);
         keywords.put("else", ELSE);
         keywords.put("false", FALSE);
         keywords.put("true", TRUE);

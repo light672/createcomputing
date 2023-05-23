@@ -36,22 +36,38 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         throw new Return(value);
     }
 
-    @Override
-    public Object visitSetExpr(Expr.Set expr){
-        Object object = evaluate(expr.object);
-        if (!(object instanceof ZincInstance)){
-            throw new RuntimeError(expr.name, "Only instances have fields");
-        }
-        Object value = evaluate(expr.value);
-        ((ZincInstance)object).set(expr.name, value);
-        return value;
-    }
+
 
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt){
         ZincFunction function = new ZincFunction(stmt, environment, false);
         environment.define(stmt.name.lexeme, function);
         return null;
+    }
+
+    @Override
+    public Void visitStructureStmt(Stmt.Structure stmt) {
+        ZincStructure structure = new ZincStructure(stmt);
+        environment.define(stmt.name.lexeme, structure);
+        return null;
+    }
+
+    @Override
+    public Object visitGetExpr(Expr.Get expr) {
+        Object object = evaluate(expr.object);
+        if (object instanceof ZincObject zObject)
+            return zObject.get(expr.name);
+        throw new RuntimeError(expr.name, "Only objects have properties.");
+    }
+
+    @Override
+    public Object visitSetExpr(Expr.Set expr) {
+        Object object = evaluate(expr.object);
+        if (!(object instanceof ZincObject zincObject))
+            throw new RuntimeError(expr.name, "Only objects have fields");
+        Object value = evaluate(expr.value);
+        zincObject.set(expr.name, value);
+        return value;
     }
 
     @Override
@@ -181,6 +197,8 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         return null;
     }
 
+
+
     @Override
     public Void visitIfStmt(Stmt.If stmt){
         if (isTruthy(evaluate(stmt.condition))){
@@ -219,85 +237,12 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Void visitForStmt(Stmt.For stmt) {
-        /*double loopAmount = (double)evaluate(stmt.left);
-        Environment environment = new Environment(this.environment);
-        environment.define(stmt.variable.lexeme, 0.0d);
-
-
-        if (stmt.body instanceof Stmt.Block block) {
-            for (int i = 0; i < loopAmount; i++) {
-                environment.assign(stmt.variable, i);
-                executeBlock(block.statements, environment);
-            }
-        }
-        else {
-            Stmt.Block block = new Stmt.Block(Arrays.asList(stmt.body));
-            for (int i = 0; i < loopAmount; i++) {
-                //Expr.Assign expr = new Expr.Assign(stmt.variable, new Expr.Literal(0));
-                environment.assign(stmt.variable, i);
-                executeBlock(block.statements, environment);
-            }
-        }*/
         ZincFor forr = new ZincFor(stmt, environment);
         forr.run(this);
         return null;
     }
 
-    @Override
-    public Void visitClassStmt(Stmt.Class stmt){
-        Object superclass = null;
-        if (stmt.superclass != null){
-            superclass = evaluate(stmt.superclass);
-            if (!(superclass instanceof ZincClass)){
-                throw new RuntimeError(stmt.superclass.name, "Superclass must be a class.");
-            }
-        }
-        environment.define(stmt.name.lexeme, null);
-        if (stmt.superclass != null){
-            environment = new Environment(environment);
-            environment.define("super", superclass);
-        }
 
-        Map<String, ZincFunction> methods = new HashMap<>();
-        for (Stmt.Function method : stmt.methods){
-            ZincFunction function = new ZincFunction(method,environment, method.name.lexeme.equals("init"));
-            methods.put(method.name.lexeme, function);
-        }
-
-
-        ZincClass clas = new ZincClass(stmt.name.lexeme, (ZincClass)superclass, methods);
-        if(superclass != null){
-            environment = environment.enclosing;
-        }
-        environment.assign(stmt.name, clas);
-        return null;
-    }
-
-    @Override
-    public Object visitThisExpr(Expr.This expr){
-        return lookUpVariable(expr.keyword, expr);
-    }
-
-    @Override
-    public Object visitSuperExpr(Expr.Super expr){
-        int distance = locals.get(expr);
-        ZincClass superclass = (ZincClass)environment.getAt(distance, "super");
-        ZincInstance object = (ZincInstance) environment.getAt(distance - 1, "this");
-        ZincFunction method = superclass.findMethod(expr.method.lexeme);
-        if (method == null){
-            throw new RuntimeError(expr.method, "Undefined property '" + expr.method.lexeme + "'.");
-        }
-        return method.bind(object);
-    }
-
-    @Override
-    public Object visitGetExpr(Expr.Get expr){
-        Object object = evaluate(expr.object);
-        if (object instanceof ZincInstance){
-            return ((ZincInstance) object).get(expr.name);
-        }
-        throw new RuntimeError(expr.name, "Only instances have properties.");
-    }
 
     public void throwError(Token t, String message){
         throw new RuntimeError(t, message);
@@ -365,12 +310,26 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     }
 
     void interpret(List<Stmt> statements){
+        List<Stmt> structOrFunctionStatements = new ArrayList<>();
+        List<Stmt> theRestOfThem = new ArrayList<>();
+
+        for (Stmt statement : statements){
+            if (statement instanceof Stmt.Structure || statement instanceof Stmt.Function){
+                structOrFunctionStatements.add(statement);
+            } else {
+                theRestOfThem.add(statement);
+            }
+        }
+
         try {
-            for (Stmt statement : statements){
+            for (Stmt statement : structOrFunctionStatements){
+                execute(statement);
+            }
+            globals.resolveEnvironment();
+            for (Stmt statement : theRestOfThem){
                 if (stopRequested)
                     return;
                 execute(statement);
-
             }
         } catch (RuntimeError error){
             main.runtimeError(error);

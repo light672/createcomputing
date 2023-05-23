@@ -4,7 +4,7 @@ import com.lightdev6.computing.AllTileEntities;
 import com.lightdev6.computing.Computing;
 import com.lightdev6.computing.block.computer.ComputerBlockEntity;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.foundation.block.ITE;
+import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.gui.ScreenOpener;
 import com.simibubi.create.foundation.utility.Iterate;
 import net.minecraft.client.player.LocalPlayer;
@@ -35,20 +35,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class RedstoneDetector extends Block implements EntityBlock, ITE<RedstoneDetectorBlockEntity> {
+public class RedstoneDetector extends Block implements EntityBlock, IBE<RedstoneDetectorBlockEntity> {
     public static final BooleanProperty LIT = BooleanProperty.create("lit");
     public RedstoneDetector(Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(LIT, Boolean.valueOf(false)));
     }
 
+
     @Override
-    public Class<RedstoneDetectorBlockEntity> getTileEntityClass() {
+    public Class<RedstoneDetectorBlockEntity> getBlockEntityClass() {
         return RedstoneDetectorBlockEntity.class;
     }
 
     @Override
-    public BlockEntityType<? extends RedstoneDetectorBlockEntity> getTileEntityType() {
+    public BlockEntityType<? extends RedstoneDetectorBlockEntity> getBlockEntityType() {
         return AllTileEntities.REDSTONE_DETECTOR.get();
     }
 
@@ -84,7 +85,7 @@ public class RedstoneDetector extends Block implements EntityBlock, ITE<Redstone
         if (AllItems.WRENCH.isIn(held))
             return InteractionResult.PASS;
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                () -> () -> withTileEntityDo(level, blockPos, te -> this.displayScreen(te, player)));
+                () -> () -> withBlockEntityDo(level, blockPos, te -> this.displayScreen(te, player)));
 
 
         return InteractionResult.SUCCESS;

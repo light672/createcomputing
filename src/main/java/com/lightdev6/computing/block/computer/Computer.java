@@ -3,8 +3,8 @@ package com.lightdev6.computing.block.computer;
 import com.lightdev6.computing.Computing;
 import com.lightdev6.computing.AllTileEntities;
 import com.simibubi.create.AllItems;
-import com.simibubi.create.content.contraptions.relays.elementary.ICogWheel;
-import com.simibubi.create.foundation.block.ITE;
+import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
+import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.gui.ScreenOpener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class Computer extends Block implements EntityBlock, ICogWheel, ITE<ComputerBlockEntity> {
+public class Computer extends Block implements EntityBlock, ICogWheel, IBE<ComputerBlockEntity> {
 
 
     public Computer(Properties properties) {
@@ -45,7 +45,7 @@ public class Computer extends Block implements EntityBlock, ICogWheel, ITE<Compu
         if (AllItems.WRENCH.isIn(held))
             return InteractionResult.PASS;
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT,
-                () -> () -> withTileEntityDo(level, blockPos, te -> this.displayScreen(te, player)));
+                () -> () -> withBlockEntityDo(level, blockPos, te -> this.displayScreen(te, player)));
         return InteractionResult.SUCCESS;
     }
 
@@ -56,13 +56,14 @@ public class Computer extends Block implements EntityBlock, ICogWheel, ITE<Compu
     }
 
 
+
     @Override
-    public Class<ComputerBlockEntity> getTileEntityClass() {
+    public Class<ComputerBlockEntity> getBlockEntityClass() {
         return ComputerBlockEntity.class;
     }
 
     @Override
-    public BlockEntityType<? extends ComputerBlockEntity> getTileEntityType() {
+    public BlockEntityType<? extends ComputerBlockEntity> getBlockEntityType() {
         return AllTileEntities.COMPUTER.get();
     }
 

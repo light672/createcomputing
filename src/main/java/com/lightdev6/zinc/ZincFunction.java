@@ -39,9 +39,5 @@ public class ZincFunction implements ZincCallable {
         return "<fn " + declaration.name.lexeme + ">";
     }
 
-    ZincFunction bind(ZincInstance instance){
-        Environment environment = new Environment(closure);
-        environment.define("this", instance);
-        return new ZincFunction(declaration, environment, isInitializer);
-    }
+
 }

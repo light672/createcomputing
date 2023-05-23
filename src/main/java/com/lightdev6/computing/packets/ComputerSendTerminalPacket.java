@@ -1,12 +1,12 @@
 package com.lightdev6.computing.packets;
 
 import com.lightdev6.computing.block.computer.ComputerBlockEntity;
-import com.simibubi.create.foundation.networking.TileEntityConfigurationPacket;
+import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class ComputerSendTerminalPacket extends TileEntityConfigurationPacket<ComputerBlockEntity> {
+public class ComputerSendTerminalPacket extends BlockEntityConfigurationPacket<ComputerBlockEntity> {
     private String terminal;
     public ComputerSendTerminalPacket(FriendlyByteBuf buffer) {
         super(buffer);
