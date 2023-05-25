@@ -9,6 +9,11 @@ public class FunctionCallInterpreter extends Interpreter{
 
     void callFunction(List<Stmt> statements, String functionName, List<Object> arguments){
         interpret(statements);
+        for (int i = 0; i < arguments.size(); i++) {
+            Object o = arguments.get(i);
+            if (o instanceof ZincStructureConversionObject c)
+                arguments.set(i, new ZincObject((ZincStructure)globals.get(Environment.createIDToken(c.getStructureName())), c.getFields()));
+        }
         Object callee = super.evaluate(new Expr.Variable(new Token(TokenType.IDENTIFIER, functionName, null, 0)));
 
         ZincCallable function = (ZincCallable)callee;

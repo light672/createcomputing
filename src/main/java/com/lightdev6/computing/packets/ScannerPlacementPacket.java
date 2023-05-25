@@ -1,7 +1,7 @@
 package com.lightdev6.computing.packets;
 
-import com.lightdev6.computing.block.inputs.redstonedetector.RedstoneDetectorBlockEntity;
-import com.lightdev6.computing.block.inputs.redstonedetector.RedstoneDetectorTargetHandler;
+import com.lightdev6.computing.block.inputs.scanner.ScannerBlockEntity;
+import com.lightdev6.computing.block.inputs.scanner.ScannerTargetHandler;
 import com.simibubi.create.foundation.networking.SimplePacketBase;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,16 +12,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
 
-public class RedstoneDetectorPlacementPacket extends SimplePacketBase {
+public class ScannerPlacementPacket extends SimplePacketBase {
     private BlockPos pos;
     private BlockPos targetPos;
 
-    public RedstoneDetectorPlacementPacket(BlockPos pos, BlockPos targetPos){
+    public ScannerPlacementPacket(BlockPos pos, BlockPos targetPos){
         this.pos = pos;
         this.targetPos = targetPos;
     }
 
-    public RedstoneDetectorPlacementPacket(FriendlyByteBuf buffer){
+    public ScannerPlacementPacket(FriendlyByteBuf buffer){
         pos = buffer.readBlockPos();
         targetPos = buffer.readBlockPos();
     }
@@ -38,16 +38,16 @@ public class RedstoneDetectorPlacementPacket extends SimplePacketBase {
             ServerPlayer player = context.getSender();
             if (player == null)
                 return;
-            Level world = player.level;
-            if (world == null || !world.isLoaded(pos))
+            Level level = player.level;
+            if (level == null || !level.isLoaded(pos))
                 return;
-            BlockEntity te = world.getBlockEntity(pos);
-            if (te instanceof RedstoneDetectorBlockEntity)
-                ((RedstoneDetectorBlockEntity) te).setTargetPos(targetPos);
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ScannerBlockEntity scanner)
+                scanner.setTargetPos(targetPos);
+
         });
         return true;
     }
-
 
     public static class ClientBoundRequest extends SimplePacketBase {
         BlockPos pos;
@@ -65,7 +65,7 @@ public class RedstoneDetectorPlacementPacket extends SimplePacketBase {
 
         @Override
         public boolean handle(NetworkEvent.Context context) {
-            context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RedstoneDetectorTargetHandler.flushSettings(pos)));
+            context.enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ScannerTargetHandler.flushSettings(pos)));
             return true;
         }
     }

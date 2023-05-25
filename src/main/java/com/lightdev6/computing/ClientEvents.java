@@ -1,6 +1,7 @@
 package com.lightdev6.computing;
 
-import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorTargetHandler;
+import com.lightdev6.computing.block.inputs.redstonedetector.RedstoneDetectorTargetHandler;
+import com.lightdev6.computing.block.inputs.scanner.ScannerTargetHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
@@ -15,6 +16,7 @@ public class ClientEvents {
             return;
 
         RedstoneDetectorTargetHandler.tick();
+        ScannerTargetHandler.tick();
     }
 
     protected static boolean isGameActive() {

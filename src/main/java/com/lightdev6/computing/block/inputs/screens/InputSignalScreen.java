@@ -1,7 +1,8 @@
-package com.lightdev6.computing.block.redstonedetector;
+package com.lightdev6.computing.block.inputs.screens;
 
 import com.lightdev6.computing.AllPackets;
-import com.lightdev6.computing.packets.ConfigureRedstoneDetectorSignalPacket;
+import com.lightdev6.computing.block.inputs.IInputBlockEntity;
+import com.lightdev6.computing.packets.ConfigureInputSignalPacket;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.CreateClient;
@@ -15,9 +16,10 @@ import com.simibubi.create.foundation.utility.Lang;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.lwjgl.glfw.GLFW;
 
-public class RedstoneDetectorScreen extends AbstractSimiScreen {
+public class InputSignalScreen extends AbstractSimiScreen {
 
     private AllGuiTextures background;
     private EditBox nameField;
@@ -28,17 +30,22 @@ public class RedstoneDetectorScreen extends AbstractSimiScreen {
     private final Component abortLabel = Lang.translateDirect("action.discard");
     private final Component confirmLabel = Lang.translateDirect("action.saveToFile");
 
-    private RedstoneDetectorBlockEntity redstoneDetector;
+    private BlockEntity be;
 
-    public RedstoneDetectorScreen(RedstoneDetectorBlockEntity redstoneDetector){
+    public InputSignalScreen(BlockEntity be){
         super(Component.literal("Edit Signal Name"));
         background = AllGuiTextures.SCHEMATIC_PROMPT;
-        this.redstoneDetector = redstoneDetector;
-        this.blockPos = redstoneDetector.getBlockPos();
+
+        this.be = be;
+        this.blockPos = be.getBlockPos();
     }
 
     @Override
     protected void init() {
+        if (!(be instanceof IInputBlockEntity inputBlock)) {
+            onClose();
+            return;
+        }
         setWindowSize(background.width, background.height);
         super.init();
 
@@ -50,8 +57,8 @@ public class RedstoneDetectorScreen extends AbstractSimiScreen {
         nameField.setTextColorUneditable(-1);
         nameField.setBordered(false);
         nameField.changeFocus(true);
-        //setFocused(nameField);
-        nameField.setValue(redstoneDetector.getSignalName());
+        setFocused(nameField);
+        nameField.setValue(inputBlock.getSignalName());
         addRenderableWidget(nameField);
 
 
@@ -101,7 +108,7 @@ public class RedstoneDetectorScreen extends AbstractSimiScreen {
     }
 
     private void confirm(){
-        AllPackets.channel.sendToServer(new ConfigureRedstoneDetectorSignalPacket(blockPos, nameField.getValue()));
+        AllPackets.channel.sendToServer(new ConfigureInputSignalPacket(blockPos, nameField.getValue()));
         onClose();
     }
 }

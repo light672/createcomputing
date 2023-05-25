@@ -1,8 +1,9 @@
-package com.lightdev6.computing.block.redstonedetector;
+package com.lightdev6.computing.block.inputs.redstonedetector;
 
 import com.lightdev6.computing.AllTileEntities;
 import com.lightdev6.computing.Computing;
 import com.lightdev6.computing.block.computer.ComputerBlockEntity;
+import com.lightdev6.computing.block.inputs.screens.InputSignalScreen;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.gui.ScreenOpener;
@@ -15,19 +16,16 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
@@ -35,9 +33,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-public class RedstoneDetector extends Block implements EntityBlock, IBE<RedstoneDetectorBlockEntity> {
+public class RedstoneDetectorBlock extends Block implements EntityBlock, IBE<RedstoneDetectorBlockEntity> {
     public static final BooleanProperty LIT = BooleanProperty.create("lit");
-    public RedstoneDetector(Properties properties) {
+    public RedstoneDetectorBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.defaultBlockState().setValue(LIT, Boolean.valueOf(false)));
     }
@@ -94,7 +92,7 @@ public class RedstoneDetector extends Block implements EntityBlock, IBE<Redstone
     @OnlyIn(value = Dist.CLIENT)
     protected void displayScreen(RedstoneDetectorBlockEntity redstoneDetector, Player player){
         if (player instanceof LocalPlayer)
-            ScreenOpener.open(new RedstoneDetectorScreen(redstoneDetector));
+            ScreenOpener.open(new InputSignalScreen(redstoneDetector));
     }
 
     @Override

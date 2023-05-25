@@ -1,4 +1,4 @@
-package com.lightdev6.computing.block.redstonedetector;
+package com.lightdev6.computing.block.inputs.redstonedetector;
 
 import com.lightdev6.computing.AllPackets;
 import com.lightdev6.computing.packets.RedstoneDetectorPlacementPacket;

@@ -2,9 +2,7 @@ package com.lightdev6.zinc;
 
 import com.lightdev6.computing.block.computer.ComputerBlockEntity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Environment {
     final Environment enclosing;
@@ -23,7 +21,7 @@ public class Environment {
         return values;
     }
 
-    Object get(Token name) {
+    public Object get(Token name) {
         if (values.containsKey(name.lexeme)) {
             return values.get(name.lexeme);
         }
@@ -74,7 +72,7 @@ public class Environment {
     public void resolveEnvironment(){
         for (Map.Entry<String, Object> entry : values.entrySet()){
             if(entry.getValue() instanceof ZincStructureConversionObject o){
-                values.replace(entry.getKey(), new ZincObject((ZincStructure)get(new Token(TokenType.IDENTIFIER, o.getStructureName(), null, 0)), o.getFields()));
+                values.replace(entry.getKey(), new ZincObject((ZincStructure)get(createIDToken(o.getStructureName())), o.getFields()));
             }
         }
     }
@@ -184,7 +182,25 @@ public class Environment {
                 return computer.readPlate(Interpreter.stringify(arguments.get(0)));
             }
         });
+        globals.define("Item", createStructure("Item", Arrays.asList("name", "id", "count")));
         return globals;
+    }
+
+
+    public static Token createIDToken(String name){
+        return new Token(TokenType.IDENTIFIER, name, null,0);
+    }
+
+    private static Stmt.Var createVarStatement(String name){
+        return new Stmt.Var(createIDToken(name), null);
+    }
+
+    private static ZincStructure createStructure(String name, List<String> variableNames){
+        List<Stmt.Var> variableStatements = new ArrayList<>();
+        for (String variableName : variableNames){
+            variableStatements.add(createVarStatement(variableName));
+        }
+        return new ZincStructure(new Stmt.Structure(createIDToken(name), variableStatements));
     }
 
 

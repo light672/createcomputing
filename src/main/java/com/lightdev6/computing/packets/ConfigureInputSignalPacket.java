@@ -1,19 +1,20 @@
 package com.lightdev6.computing.packets;
 
-import com.lightdev6.computing.block.redstonedetector.RedstoneDetectorBlockEntity;
+import com.lightdev6.computing.block.inputs.IInputBlockEntity;
+import com.simibubi.create.foundation.blockEntity.SyncedBlockEntity;
 import com.simibubi.create.foundation.networking.BlockEntityConfigurationPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 
-public class ConfigureRedstoneDetectorSignalPacket extends BlockEntityConfigurationPacket<RedstoneDetectorBlockEntity> {
+public class ConfigureInputSignalPacket extends BlockEntityConfigurationPacket<SyncedBlockEntity> {
     private String signalName;
-    public ConfigureRedstoneDetectorSignalPacket(BlockPos pos, String signalName) {
+    public ConfigureInputSignalPacket(BlockPos pos, String signalName) {
         super(pos);
         this.signalName = signalName;
     }
 
-    public ConfigureRedstoneDetectorSignalPacket(FriendlyByteBuf buffer){
+    public ConfigureInputSignalPacket(FriendlyByteBuf buffer){
         super(buffer);
     }
 
@@ -32,8 +33,10 @@ public class ConfigureRedstoneDetectorSignalPacket extends BlockEntityConfigurat
     }
 
     @Override
-    protected void applySettings(RedstoneDetectorBlockEntity redstoneDetector) {
-        redstoneDetector.setSignalName(this.signalName);
-        redstoneDetector.sendData();
+    protected void applySettings(SyncedBlockEntity be) {
+        if (!(be instanceof IInputBlockEntity input))
+            return;
+        input.setSignalName(this.signalName);
+        input.getBlockEntity().sendData();
     }
 }
