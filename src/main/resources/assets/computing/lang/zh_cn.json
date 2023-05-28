@@ -1,1 +1,13 @@
-
+{
+  "item.computing.silicon": "硅",
+  "block.computing.computer": "电脑",
+  "block.computing.redstone_detector": "红石探测器",
+  "computing.display_source.computer_source_terminal": "终端中的最新条目",
+  "computing.display_source.computer_source_frequency": "来自显示频率",
+  "create.display_source.computer_display_frequency.display_zero": "频率 0",
+  "create.display_source.computer_display_frequency.display_one": "频率 1",
+  "create.display_source.computer_display_frequency.display_two": "频率 2",
+  "create.display_source.computer_display_frequency.display_three": "频率 3",
+  "create.display_source.computer_display_frequency.display_four": "频率 4",
+  "create.display_source.computer_display_frequency.display_five": "频率 5"
+}
