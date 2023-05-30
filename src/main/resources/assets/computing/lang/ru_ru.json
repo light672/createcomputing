@@ -1,0 +1,13 @@
+{
+  "item.computing.silicon": "Силикон",
+  "block.computing.computer": "Компьютер",
+  "block.computing.redstone_detector": "Редстоуновый детектор",
+  "computing.display_source.computer_source_terminal": "Последняя запись в терминале",
+  "computing.display_source.computer_source_frequency": "Из частоты дисплея",
+  "create.display_source.computer_display_frequency.display_zero": "Частота 0",
+  "create.display_source.computer_display_frequency.display_one": "Частота 1",
+  "create.display_source.computer_display_frequency.display_two": "Частота 2",
+  "create.display_source.computer_display_frequency.display_three": "Частота 3",
+  "create.display_source.computer_display_frequency.display_four": "Частота 4",
+  "create.display_source.computer_display_frequency.display_five": "Частота 5"
+}
