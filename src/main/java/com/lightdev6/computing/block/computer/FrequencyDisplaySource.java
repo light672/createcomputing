@@ -21,7 +21,6 @@ public class FrequencyDisplaySource extends SingleLineDisplaySource {
             return EMPTY_LINE;
         if (!computer.isSpeedRequirementFulfilled())
             return EMPTY_LINE;
-        //eturn Component.literal("");
         return Component.literal(computer.getDisplayFreq(context.sourceConfig().getInt("DisplayFrequency")));
     }
 
