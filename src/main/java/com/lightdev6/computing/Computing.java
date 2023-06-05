@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -30,7 +31,6 @@ public class Computing {
     public static final String MOD_ID = "computing";
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final CreateRegistrate REGISTRATE = CreateRegistrate.create(MOD_ID);
-    public static Map<Location, Zinc> runningPrograms = new HashMap<>();
 
 
 
@@ -64,24 +64,12 @@ public class Computing {
     }
 
     public static void runProgram(String source, ComputerBlockEntity computer) {
-        Thread thread = new Thread(() -> {
-            Zinc program = new Zinc(computer);
-            runningPrograms.put(computer.getLocation(), program);
-            program.run(source);
-            runningPrograms.remove(computer.getLocation());
-        });
-        thread.start();
-
+        Zinc program = new Zinc(computer);
+        CompletableFuture.runAsync(() -> program.run(source));
     }
     public static void runFunctionProgram(String function, List<Object> arguments, String source, ComputerBlockEntity computer){
-        Thread thread = new Thread(() -> {
-            Zinc program = new Zinc(computer);
-            runningPrograms.put(computer.getLocation(), program);
-            program.runFunction(source, function, arguments);
-            runningPrograms.remove(computer.getLocation());
-        });
-        thread.start();
-
+        Zinc program = new Zinc(computer);
+        CompletableFuture.runAsync(() -> program.runFunction(source, function, arguments));
     }
 
     public static ResourceLocation asResource(String path) {

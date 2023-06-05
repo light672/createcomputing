@@ -15,11 +15,11 @@ public class TerminalDisplaySource extends SingleLineDisplaySource {
     @Override
     protected MutableComponent provideLine(DisplayLinkContext context, DisplayTargetStats stats) {
         if (!(context.level() instanceof ServerLevel level))
-            return null;
+            return EMPTY_LINE;
         if (!(context.getSourceBlockEntity() instanceof ComputerBlockEntity computer))
-            return null;
+            return EMPTY_LINE;
         if (!computer.isSpeedRequirementFulfilled())
-            return null;
+            return EMPTY_LINE;
         String[] lines = computer.getTerminal().split("\n");
         return Component.literal(lines[lines.length - 1]);
     }

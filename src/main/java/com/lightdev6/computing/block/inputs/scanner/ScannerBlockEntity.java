@@ -83,7 +83,7 @@ public class ScannerBlockEntity extends KineticBlockEntity implements ScannerBeh
             Map<String, Object> fields = new HashMap<>();
             fields.put("id", ForgeRegistries.ITEMS.getKey(itemStack.stack.getItem()).toString());
             fields.put("name", itemStack.stack.getHoverName().getString());
-            fields.put("count", itemStack.stack.getCount());
+            fields.put("count", (double)itemStack.stack.getCount());
             Computing.runFunctionProgram(signalName, Arrays.asList(new ZincStructureConversionObject("Item", fields)), computer.getScript(), computer);
         }
         System.out.println(itemStack.stack.getHoverName());

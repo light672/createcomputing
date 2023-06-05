@@ -90,12 +90,24 @@ public class ScannerBehaviour extends BeltProcessingBehaviour {
     }
 
     public float getRenderedHeadOffset(float partialTicks) {
+        /*if (!running)
+            return 0;
+        int runningTicks = Math.abs(this.runningTicks);
+        float ticks = Mth.lerp(partialTicks, prevRunningTicks, runningTicks);
+        if (runningTicks < (CYCLE * 2) / 3) {
+            System.out.println("Going down!");
+            return (float) Mth.clamp(Math.pow(ticks / CYCLE * 2, 3), 0, 1);
+        }
+        System.out.println("Going down!");
+        return Mth.clamp((CYCLE - ticks) / CYCLE * 3, 0, 1);*/
+
         if (!running)
             return 0;
         int runningTicks = Math.abs(this.runningTicks);
         float ticks = Mth.lerp(partialTicks, prevRunningTicks, runningTicks);
-        if (runningTicks < (CYCLE * 2) / 3)
+        if (runningTicks < (CYCLE * 2) / 3) {
             return (float) Mth.clamp(Math.pow(ticks / CYCLE * 2, 3), 0, 1);
+        }
         return Mth.clamp((CYCLE - ticks) / CYCLE * 3, 0, 1);
     }
 

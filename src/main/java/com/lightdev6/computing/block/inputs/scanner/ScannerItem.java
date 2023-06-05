@@ -2,6 +2,7 @@ package com.lightdev6.computing.block.inputs.scanner;
 
 import com.lightdev6.computing.AllPackets;
 import com.lightdev6.computing.packets.ScannerPlacementPacket;
+import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -15,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
-public class ScannerItem extends BlockItem {
+public class ScannerItem extends AssemblyOperatorBlockItem {
 
     public ScannerItem(Block pBlock, Properties pProperties) {
         super(pBlock, pProperties);

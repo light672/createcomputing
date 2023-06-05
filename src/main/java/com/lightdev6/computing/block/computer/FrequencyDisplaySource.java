@@ -16,11 +16,12 @@ public class FrequencyDisplaySource extends SingleLineDisplaySource {
     @Override
     protected MutableComponent provideLine(DisplayLinkContext context, DisplayTargetStats stats) {
         if (!(context.level() instanceof ServerLevel level))
-            return null;
+            return EMPTY_LINE;
         if (!(context.getSourceBlockEntity() instanceof ComputerBlockEntity computer))
-            return null;
+            return EMPTY_LINE;
         if (!computer.isSpeedRequirementFulfilled())
-            return null;
+            return EMPTY_LINE;
+        //eturn Component.literal("");
         return Component.literal(computer.getDisplayFreq(context.sourceConfig().getInt("DisplayFrequency")));
     }
 
@@ -45,7 +46,7 @@ public class FrequencyDisplaySource extends SingleLineDisplaySource {
 
     @Override
     public int getPassiveRefreshTicks() {
-        return 10;
+        return 20;
     }
 
     @Override

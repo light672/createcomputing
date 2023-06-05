@@ -42,7 +42,7 @@ public class ScannerInstance extends ShaftInstance<ScannerBlockEntity> implement
         float renderedHeadOffset = getRenderedHeadOffset(blockEntity);
 
         pressHead.setPosition(getInstancePosition())
-                .nudge(-renderedHeadOffset, 0, 0);
+                .nudge(0, -renderedHeadOffset, 0);
     }
 
     private float getRenderedHeadOffset(ScannerBlockEntity press) {

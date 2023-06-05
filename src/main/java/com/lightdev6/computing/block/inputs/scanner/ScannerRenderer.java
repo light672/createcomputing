@@ -42,7 +42,7 @@ public class ScannerRenderer extends KineticBlockEntityRenderer<ScannerBlockEnti
 
         SuperByteBuffer headRender = CachedBufferer.partialFacing(AllPartialModels.MECHANICAL_PRESS_HEAD, blockState,
                 blockState.getValue(HORIZONTAL_FACING));
-        headRender.translate(-renderedHeadOffset, 0, 0)
+        headRender.translate(0, -renderedHeadOffset, 0)
                 .light(light)
                 .renderInto(ms, buffer.getBuffer(RenderType.solid()));
     }

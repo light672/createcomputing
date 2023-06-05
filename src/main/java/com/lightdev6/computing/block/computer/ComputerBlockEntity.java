@@ -43,6 +43,8 @@ public class ComputerBlockEntity extends KineticBlockEntity {
 
     private LinkedHashSet<LazyOptional<IItemHandler>> attachedInventories;
 
+    public List<Zinc> runningPrograms = new ArrayList<>();
+
     public ComputerBlockEntity(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState) {
         super(AllTileEntities.COMPUTER.get(), blockPos, blockState);
         attachedInventories = new LinkedHashSet<>();
@@ -262,6 +264,10 @@ public class ComputerBlockEntity extends KineticBlockEntity {
                 compoundTag.put("Value", structObjectToTag(s));
                 compoundTag.putString("StructureIdentifier", s.getStructure().getName());
                 listTag.add(compoundTag);
+            } else if (entry.getValue() == null){
+                compoundTag.putString("Identifier", entry.getKey());
+                compoundTag.putInt("Value", 0);
+                listTag.add(compoundTag);
             }
         }
         return listTag;
@@ -309,6 +315,9 @@ public class ComputerBlockEntity extends KineticBlockEntity {
             } else if (entry.getValue() instanceof ZincObject s){
                 entryTag.putString("Identifier", entry.getKey());
                 entryTag.put("Value",structObjectToTag(s));
+            } else if (entry.getValue() == null){
+                entryTag.putString("Identifier", entry.getKey());
+                entryTag.putInt("Value", 0);
             }
         }
 
@@ -336,6 +345,8 @@ public class ComputerBlockEntity extends KineticBlockEntity {
             } else if (b == Tag.TAG_LIST){
                 value = tagToStructObject(compoundTag);
                 fields.put(identifier, value);
+            } else {
+                fields.put(identifier, null);
             }
         }
         return new ZincStructureConversionObject(structureName, fields);
@@ -371,12 +382,10 @@ public class ComputerBlockEntity extends KineticBlockEntity {
 
 
     public void stop() {
-        System.out.println(Computing.runningPrograms.get(getLocation()));
-        if (Computing.runningPrograms.containsKey(getLocation())) {
-            Computing.runningPrograms.get(getLocation()).interpreter.stopRequested = true;
-            Computing.runningPrograms.remove(getLocation());
+        for (Zinc program : runningPrograms){
+            program.interpreter.stopRequested = true;
+            program.functionInterpreter.stopRequested = true;
         }
-
         setRunning(false);
     }
 }
