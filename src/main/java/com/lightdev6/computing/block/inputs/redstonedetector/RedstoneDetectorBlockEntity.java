@@ -1,23 +1,19 @@
 package com.lightdev6.computing.block.inputs.redstonedetector;
 
-import com.lightdev6.computing.AllTileEntities;
+import com.lightdev6.computing.AllBlockEntities;
 import com.lightdev6.computing.block.inputs.IInputBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SyncedBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.List;
 
 public class RedstoneDetectorBlockEntity extends SyncedBlockEntity implements IInputBlockEntity {
     private String signalName = "";
     private BlockPos targetPos = getBlockPos();
 
     public RedstoneDetectorBlockEntity(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState) {
-        super(AllTileEntities.REDSTONE_DETECTOR.get(), blockPos, blockState);
+        super(AllBlockEntities.REDSTONE_DETECTOR.get(), blockPos, blockState);
     }
 
     @Override

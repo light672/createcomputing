@@ -1,6 +1,6 @@
 package com.lightdev6.computing.block.inputs.redstonedetector;
 
-import com.lightdev6.computing.AllTileEntities;
+import com.lightdev6.computing.AllBlockEntities;
 import com.lightdev6.computing.Computing;
 import com.lightdev6.computing.block.computer.ComputerBlockEntity;
 import com.lightdev6.computing.block.inputs.screens.InputSignalScreen;
@@ -48,13 +48,13 @@ public class RedstoneDetectorBlock extends Block implements EntityBlock, IBE<Red
 
     @Override
     public BlockEntityType<? extends RedstoneDetectorBlockEntity> getBlockEntityType() {
-        return AllTileEntities.REDSTONE_DETECTOR.get();
+        return AllBlockEntities.REDSTONE_DETECTOR.get();
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return AllTileEntities.REDSTONE_DETECTOR.get().create(blockPos, blockState);
+        return AllBlockEntities.REDSTONE_DETECTOR.get().create(blockPos, blockState);
     }
 
 

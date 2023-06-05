@@ -1,19 +1,16 @@
 package com.lightdev6.computing.block.inputs.scanner;
 
-import com.lightdev6.computing.AllTileEntities;
+import com.lightdev6.computing.AllBlockEntities;
 import com.lightdev6.computing.Computing;
 import com.lightdev6.computing.block.computer.ComputerBlockEntity;
 import com.lightdev6.computing.block.inputs.IInputBlockEntity;
-import com.lightdev6.zinc.Environment;
 import com.lightdev6.zinc.ZincStructureConversionObject;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
-import com.simibubi.create.content.kinetics.belt.behaviour.BeltProcessingBehaviour;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
 import com.simibubi.create.foundation.blockEntity.SyncedBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -28,7 +25,7 @@ public class ScannerBlockEntity extends KineticBlockEntity implements ScannerBeh
     private BlockPos targetPos = getBlockPos();
     private String signalName = "";
     public ScannerBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
-        super(AllTileEntities.SCANNER.get(), pos, state);
+        super(AllBlockEntities.SCANNER.get(), pos, state);
     }
     @Override
     public void setTargetPos(BlockPos targetPos){

@@ -1,6 +1,6 @@
 package com.lightdev6.computing.block.computer;
 
-import com.lightdev6.computing.AllTileEntities;
+import com.lightdev6.computing.AllBlockEntities;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.simpleRelays.ICogWheel;
 import com.simibubi.create.foundation.block.IBE;
@@ -60,13 +60,13 @@ public class ComputerBlock extends Block implements EntityBlock, ICogWheel, IBE<
 
     @Override
     public BlockEntityType<? extends ComputerBlockEntity> getBlockEntityType() {
-        return AllTileEntities.COMPUTER.get();
+        return AllBlockEntities.COMPUTER.get();
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return AllTileEntities.COMPUTER.get().create(blockPos, blockState);
+        return AllBlockEntities.COMPUTER.get().create(blockPos, blockState);
     }
 
 

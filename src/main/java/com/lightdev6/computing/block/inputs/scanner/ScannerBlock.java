@@ -1,11 +1,9 @@
 package com.lightdev6.computing.block.inputs.scanner;
 
-import com.lightdev6.computing.AllTileEntities;
-import com.lightdev6.computing.block.inputs.redstonedetector.RedstoneDetectorBlockEntity;
+import com.lightdev6.computing.AllBlockEntities;
 import com.lightdev6.computing.block.inputs.screens.InputSignalScreen;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllShapes;
-import com.simibubi.create.content.kinetics.base.DirectionalAxisKineticBlock;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import com.simibubi.create.foundation.gui.ScreenOpener;
@@ -42,7 +40,7 @@ public class ScannerBlock extends HorizontalKineticBlock implements IBE<ScannerB
 
     @Override
     public BlockEntityType<? extends ScannerBlockEntity> getBlockEntityType() {
-        return AllTileEntities.SCANNER.get();
+        return AllBlockEntities.SCANNER.get();
     }
 
     @Override

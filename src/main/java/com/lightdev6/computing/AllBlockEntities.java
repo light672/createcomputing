@@ -9,7 +9,7 @@ import com.lightdev6.computing.block.inputs.scanner.ScannerInstance;
 import com.lightdev6.computing.block.inputs.scanner.ScannerRenderer;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import static com.lightdev6.computing.Computing.REGISTRATE;
-public class AllTileEntities {
+public class AllBlockEntities {
     public static final BlockEntityEntry<ComputerBlockEntity> COMPUTER = REGISTRATE
             .blockEntity("computer", ComputerBlockEntity::new)
             .instance(() -> ComputerInstance::new)

@@ -1,7 +1,6 @@
 package com.lightdev6.computing.block.computer;
 
-import com.lightdev6.computing.AllTileEntities;
-import com.lightdev6.computing.Computing;
+import com.lightdev6.computing.AllBlockEntities;
 import com.lightdev6.computing.Location;
 import com.lightdev6.zinc.*;
 import com.simibubi.create.AllItems;
@@ -12,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +21,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.EmptyHandler;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.*;
 
@@ -46,7 +43,7 @@ public class ComputerBlockEntity extends KineticBlockEntity {
     public List<Zinc> runningPrograms = new ArrayList<>();
 
     public ComputerBlockEntity(BlockEntityType<?> type, BlockPos blockPos, BlockState blockState) {
-        super(AllTileEntities.COMPUTER.get(), blockPos, blockState);
+        super(AllBlockEntities.COMPUTER.get(), blockPos, blockState);
         attachedInventories = new LinkedHashSet<>();
 
     }
